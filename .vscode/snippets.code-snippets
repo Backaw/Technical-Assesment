@@ -1,0 +1,87 @@
+{
+  "TestInvoke": {
+    "prefix": ["test-invoke"],
+    "body": [
+      "game:GetService(\"UserInputService\").InputBegan:Connect(function(input, gameProcessed)",
+      "\tif gameProcessed then",
+      "\t\t return",
+      "\tend",
+      "",
+      "\tif input.KeyCode == Enum.KeyCode.${1:E} then",
+      "\t\t$0",
+      "\tend",
+      "end)"
+    ]
+  },
+  "ClientPath": {
+    "prefix": ["paths-client"],
+    "body": [
+      "local Players = game:GetService(\"Players\")",
+      "local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)"
+    ]
+  },
+  "ServerPath": {
+    "prefix": ["paths-server"],
+    "body": [
+      "local ServerScriptService = game:GetService(\"ServerScriptService\")",
+      "local Paths = require(ServerScriptService.Paths)"
+    ]
+  },
+  "LocalPlayer": {
+    "prefix": ["localplayer"],
+    "body": ["local player = Players.LocalPlayer"]
+  },
+  "Module": {
+    "prefix": ["module"],
+    "body": [
+      "local ${0:$TM_FILENAME_BASE} = {}",
+      "",
+      "return ${0:$TM_FILENAME_BASE}"
+    ]
+  },
+  "CommentHeader": {
+    "prefix": ["comment-header"],
+    "body": [
+      "-------------------------------------------------------------------------------",
+      "-- ${0:COMMENT}",
+      "-------------------------------------------------------------------------------"
+    ]
+  },
+  "UIStateMachine": {
+    "prefix": ["ui-state"],
+    "body": [
+      "local UIController = require(Paths.controllers.UI.UIController)",
+      "local UIConstants = require(Paths.controllers.UI.UIConstants)",
+      "",
+      "local uiStateMachine = UIController.getStateMachine()"
+    ]
+  },
+  "SharedModule": {
+    "prefix": ["shared-module"],
+    "body": [
+      "local ${1:Module} = require(ReplicatedStorage.Modules.${1:Module})"
+    ]
+  },
+
+  "SharedUtil": {
+    "prefix": ["shared-util"],
+    "body": [
+      "local ${1:Module} = require(ReplicatedStorage.Modules.Utils.${1:Module})"
+    ]
+  },
+
+  "PathsController": {
+    "prefix": ["paths-controller"],
+    "body": ["local ${1:Module} = require(Paths.controllers.${1:Module})"]
+  },
+
+  "PathsService": {
+    "prefix": ["paths-service"],
+    "body": ["local ${1:Module} = require(Paths.services.${1:Module})"]
+  },
+
+  "PathsSharedUtil": {
+    "prefix": ["paths-shared-util"],
+    "body": ["local ${1:Module} = require(Paths.shared.Utils.${1:Module})"]
+  }
+}

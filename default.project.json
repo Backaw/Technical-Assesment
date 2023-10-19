@@ -1,0 +1,61 @@
+{
+  "name": "NEW_GAME",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "$ignoreUnknownInstances": true,
+      "$path": "src/ReplicatedFirst"
+    },
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$ignoreUnknownInstances": true,
+
+      "Modules": {
+        "$className": "Folder",
+        "$path": "src/Shared",
+
+        "Packages": {
+          "$className": "Folder",
+
+          "Promise": {
+            "$path": "roblox-lua-promise/lib"
+          },
+          "Cmdr": {
+            "$path": "Cmdr/Cmdr"
+          },
+
+          "GameAnalytics": {
+            "$path": "GA-SDK-ROBLOX/gameanalytics-sdk/GameAnalytics"
+          }
+        }
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$path": "src/Server",
+
+      "ProfileService": {
+        "$path": "ProfileService/ProfileService.lua"
+      }
+    },
+
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "$ignoreUnknownInstances": true,
+
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$ignoreUnknownInstances": true,
+        "$path": "src/Client",
+
+        "GameAnalyticsClient": {
+          "$path": "GA-SDK-ROBLOX/gameanalytics-sdk/GameAnalyticsClient.lua"
+        }
+      }
+    }
+  }
+}

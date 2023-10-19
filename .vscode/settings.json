@@ -1,0 +1,23 @@
+{
+  "editor.semanticHighlighting.enabled": true,
+  "editor.formatOnSave": true,
+  "robloxLsp.suggestedImports.importScriptChildren": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "robloxLsp.typeChecking.mode": "Strict",
+  "robloxLsp.typeChecking.options": {
+    "infer-instance-from-unknown": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  "search.exclude": {
+    "Janitor": true,
+    "roact": true,
+    "roact-rodux": true,
+    "rodux": true,
+    "roblox-lua-promise": true
+  }
+}
