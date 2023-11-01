@@ -2,7 +2,7 @@ local FrameUtil = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UIScaleController = require(Paths.controllers.UI.UIScaleController)
+local UIScaleController = require(Paths.Controllers.UI.UIScaleController)
 
 function FrameUtil.scaleToVerticalGrid(frame: Frame)
 	frame.AutomaticSize = Enum.AutomaticSize.None

@@ -2,11 +2,11 @@ local CmdrService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Permissions = require(Paths.shared.Permissions)
+local Permissions = require(Paths.Shared.Permissions)
 
 -- Takes a while to load, so put on a separate thread
 task.spawn(function()
-	local Cmdr = require(Paths.shared.Packages.Cmdr)
+	local Cmdr = require(Paths.Shared.Packages.Cmdr)
 
 	-- Cmdr:RegisterDefaultCommands()
 

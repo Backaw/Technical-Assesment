@@ -2,9 +2,9 @@ local PlayersUtil = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Maid = require(Paths.shared.Maid)
-local InstanceUtil = require(Paths.shared.Utils.InstanceUtil)
-local CharacterUtil = require(Paths.shared.Character.CharacterUtil)
+local Maid = require(Paths.Shared.Maid)
+local InstanceUtil = require(Paths.Shared.Utils.InstanceUtil)
+local CharacterUtil = require(Paths.Shared.Character.CharacterUtil)
 
 function PlayersUtil.loadPlayer(playerHandler: (player: Player, maid: Maid.Maid) -> (((Model) -> ())?, ((Model) -> ())?))
 	local maid = Maid.new()

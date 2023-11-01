@@ -4,10 +4,10 @@ local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Toggle = require(Paths.shared.Toggle)
-local TweenUtil = require(Paths.shared.Utils.TweenUtil)
-local Binder = require(Paths.shared.Binder)
-local CameraController = require(Paths.controllers.CameraController)
+local Toggle = require(Paths.Shared.Toggle)
+local TweenUtil = require(Paths.Shared.Utils.TweenUtil)
+local Binder = require(Paths.Shared.Binder)
+local CameraController = require(Paths.Controllers.CameraController)
 
 local ANIMATION_LENGTH = 0.3
 local PROMPT_ANIMATION_LENGTH = ANIMATION_LENGTH / 2
@@ -21,7 +21,7 @@ blurEffect.Size = 0
 blurEffect.Enabled = true
 blurEffect.Parent = Lighting
 
-local backgroundScreen: ScreenGui = Paths.ui.Background
+local backgroundScreen: ScreenGui = Paths.UI.Background
 local backgroundFrame: Frame = backgroundScreen.Frame
 
 local cosmeticsEnabled = Toggle.new(false, function(toggle)

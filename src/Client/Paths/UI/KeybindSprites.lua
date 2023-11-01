@@ -2,7 +2,7 @@ local KeybindSprites = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Spritesheet = require(Paths.shared.Spritesheet)
+local Spritesheet = require(Paths.Shared.Spritesheet)
 
 local gestures = Spritesheet.new("rbxassetid://1244652786")
 gestures:AddSprite("DoubleRotate", Vector2.new(0, 0), Vector2.new(102, 139))

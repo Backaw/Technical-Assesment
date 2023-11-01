@@ -50,8 +50,8 @@
   "UIStateMachine": {
     "prefix": ["ui-state"],
     "body": [
-      "local UIController = require(Paths.controllers.UI.UIController)",
-      "local UIConstants = require(Paths.controllers.UI.UIConstants)",
+      "local UIController = require(Paths.Controllers.UI.UIController)",
+      "local UIConstants = require(Paths.Controllers.UI.UIConstants)",
       "",
       "local uiStateMachine = UIController.getStateMachine()"
     ]
@@ -72,16 +72,16 @@
 
   "PathsController": {
     "prefix": ["paths-controller"],
-    "body": ["local ${1:Module} = require(Paths.controllers.${1:Module})"]
+    "body": ["local ${1:Module} = require(Paths.Controllers.${1:Module})"]
   },
 
   "PathsService": {
     "prefix": ["paths-service"],
-    "body": ["local ${1:Module} = require(Paths.services.${1:Module})"]
+    "body": ["local ${1:Module} = require(Paths.Services.${1:Module})"]
   },
 
   "PathsSharedUtil": {
     "prefix": ["paths-shared-util"],
-    "body": ["local ${1:Module} = require(Paths.shared.Utils.${1:Module})"]
+    "body": ["local ${1:Module} = require(Paths.Shared.Utils.${1:Module})"]
   }
 }

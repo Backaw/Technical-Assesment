@@ -2,11 +2,11 @@ local UIController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local StateMachine = require(Paths.shared.StateMachine)
-local UIConstants = require(Paths.controllers.UI.UIConstants)
-local StringUtil = require(Paths.shared.Utils.StringUtil)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local UIUtil = require(Paths.controllers.UI.Utils.UIUtil)
+local StateMachine = require(Paths.Shared.StateMachine)
+local UIConstants = require(Paths.Controllers.UI.UIConstants)
+local StringUtil = require(Paths.Shared.Utils.StringUtil)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local UIUtil = require(Paths.Controllers.UI.Utils.UIUtil)
 
 type ScreenStateCallback = ((table?) -> ())?
 type ScreenStateCallbacks = {
@@ -32,7 +32,7 @@ function UIController.registerScreenStateCallbacks(state: string, callbacks: Scr
 end
 
 function UIController.init()
-	for _, descedant in pairs(Paths.controllers.UI:GetDescendants()) do
+	for _, descedant in pairs(Paths.Controllers.UI:GetDescendants()) do
 		if descedant:IsA("ModuleScript") and StringUtil.endsWith(descedant.Name, "Screen") then
 			require(descedant)
 		end

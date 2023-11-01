@@ -3,7 +3,7 @@ local TextService = game:GetService("TextService")
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UIScaleController = require(Paths.controllers.UI.UIScaleController)
+local UIScaleController = require(Paths.Controllers.UI.UIScaleController)
 
 local FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold)
 

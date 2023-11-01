@@ -3,7 +3,7 @@ local CollisionService = {}
 local PhysicsService = game:GetService("PhysicsService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local CollisionConstants = require(Paths.shared.Constants.CollisionConstants)
+local CollisionConstants = require(Paths.Shared.Constants.CollisionConstants)
 
 local function setGroupCollideableBlacklist(group: string, blacklist: CollisionConstants.Groups)
 	for _, otherGroup in CollisionConstants.Groups do

@@ -2,8 +2,8 @@ local TabbedWindow = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Signal = require(Paths.shared.Signal)
-local Button = require(Paths.controllers.UI.Components.Button)
+local Signal = require(Paths.Shared.Signal)
+local Button = require(Paths.Controllers.UI.Components.Button)
 
 export type TabbedWindow = typeof(TabbedWindow.new())
 
@@ -25,7 +25,7 @@ function TabbedWindow.new(
 	-------------------------------------------------------------------------------
 	-- PUBLIC MEMBERS
 	-------------------------------------------------------------------------------
-	tabbedWindow.activeChanged = Signal.new() --> (newTab : string, lastTab: string)
+	tabbedWindow.ActiveChanged = Signal.new() --> (newTab : string, lastTab: string)
 
 	-------------------------------------------------------------------------------
 	-- PUBLIC METHODS
@@ -53,7 +53,7 @@ function TabbedWindow.new(
 			onTabSelectedToggled(tabs[name], true)
 		end
 
-		tabbedWindow.activeChanged:Fire(name, lastActive)
+		tabbedWindow.ActiveChanged:Fire(name, lastActive)
 	end
 
 	function tabbedWindow:GetWindow(name: string)
@@ -93,7 +93,7 @@ function TabbedWindow.new(
 			onTabSelectedToggled(tab, name == activeWindow)
 		end
 
-		tab.clicked:Connect(function()
+		tab.Clicked:Connect(function()
 			tabbedWindow:Open(name)
 		end)
 	end

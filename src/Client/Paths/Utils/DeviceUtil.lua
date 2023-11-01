@@ -4,7 +4,7 @@ local GuiService = game:GetService("GuiService")
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Maid = require(Paths.shared.Maid)
+local Maid = require(Paths.Shared.Maid)
 
 DeviceUtil.DEVICES = {
 	Console = "Console",

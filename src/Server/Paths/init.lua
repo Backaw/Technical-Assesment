@@ -1,33 +1,33 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Paths = {}
 
-Paths.services = script
-Paths.shared = ReplicatedStorage.Modules
+Paths.Services = script
+Paths.Shared = ReplicatedStorage.Modules
 
-Paths.initialized = require(Paths.shared.DeferredPromise).new()
-Paths.assets = ReplicatedStorage.Assets
+Paths.Initialized = require(Paths.Shared.DeferredPromise).new()
+Paths.Assets = ReplicatedStorage.Assets
 
 task.delay(0, function()
 	local ping = os.clock()
 
 	local initializing = {
-		require(Paths.shared.Utils.ParticleUtil),
+		require(Paths.Shared.Utils.ParticleUtil),
 
 		-- Services
-		require(Paths.services.SoftShutdownService),
-		require(Paths.services.UnitTestingService),
-		require(Paths.services.CollisionService),
-		require(Paths.services.PlayersService),
-		require(Paths.services.CoinService),
-		require(Paths.services.Products.ProductService),
-		require(Paths.services.SettingsService),
-		require(Paths.services.Cmdr.CmdrService),
-		require(Paths.services.GameAnalyticsService),
-		require(Paths.services.PromoCodeService),
-		require(Paths.services.ItemService),
-		-- require(Paths.services.Data.LeaderboardService),
-		require(Paths.services.RewardService),
-		require(Paths.services.FriendsService),
+		require(Paths.Services.SoftShutdownService),
+		require(Paths.Services.UnitTestingService),
+		require(Paths.Services.CollisionService),
+		require(Paths.Services.PlayersService),
+		require(Paths.Services.CurrencyService),
+		require(Paths.Services.Products.ProductService),
+		require(Paths.Services.SettingsService),
+		require(Paths.Services.Cmdr.CmdrService),
+		require(Paths.Services.GameAnalyticsService),
+		require(Paths.Services.PromoCodeService),
+		require(Paths.Services.ItemService),
+		-- require(Paths.Services.Data.LeaderboardService),
+		require(Paths.Services.RewardService),
+		require(Paths.Services.FriendsService),
 	}
 
 	for _, module in ipairs(initializing) do
@@ -46,7 +46,7 @@ task.delay(0, function()
 		end)
 	end
 
-	Paths.initialized.resolve()
+	Paths.Initialized.resolve()
 
 	print("Welcome to NEW GAME")
 	print(string.format("✅ Server loaded in %.6f seconds", os.clock() - ping))

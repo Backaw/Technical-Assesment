@@ -2,10 +2,10 @@ local PlaytimeRewardService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local PlayersService = require(Paths.services.PlayersService)
-local RewardService = require(Paths.services.RewardService)
-local Remotes = require(Paths.shared.Remotes)
-local PlaytimeRewardConstants = require(Paths.shared.Constants.PlaytimeRewardConstants)
+local PlayersService = require(Paths.Services.PlayersService)
+local RewardService = require(Paths.Services.RewardService)
+local Remotes = require(Paths.Shared.Remotes)
+local PlaytimeRewardConstants = require(Paths.Shared.Constants.PlaytimeRewardConstants)
 
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS

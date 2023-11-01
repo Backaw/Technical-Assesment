@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 
-local screen: ScreenGui = Paths.ui.Transitions
+local screen: ScreenGui = Paths.UI.Transitions
 local frame: Frame = screen.Wipe
 
 local ADDITIONAL_OFFSET = 0.02

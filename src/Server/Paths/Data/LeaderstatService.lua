@@ -2,12 +2,12 @@ local LeaderstatService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local PlayersService = require(Paths.services.PlayersService)
-local DataConstants = require(Paths.shared.Data.DataConstants)
-local QuestUtil = require(Paths.shared.Quests.QuestUtil)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local QuestConstants = require(Paths.shared.Quests.QuestConstants)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local PlayersService = require(Paths.Services.PlayersService)
+local DataConstants = require(Paths.Shared.Data.DataConstants)
+local QuestUtil = require(Paths.Shared.Quests.QuestUtil)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local QuestConstants = require(Paths.Shared.Quests.QuestConstants)
 
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
@@ -37,7 +37,7 @@ end, "leaderstats")
 -------------------------------------------------------------------------------
 -- LOGIC
 -------------------------------------------------------------------------------
-PlayerDataService.updated:Connect(function(event, player, value, metadata)
+PlayerDataService.Updated:Connect(function(event, player, value, metadata)
 	if event == "QuestStatChanged" then
 		local leaderstat = statToLeaderstat[metadata.Stat]
 		if leaderstat then

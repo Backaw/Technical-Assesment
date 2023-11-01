@@ -2,10 +2,10 @@ local QuestController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local QuestUtil = require(Paths.shared.Quests.QuestUtil)
-local QuestConstants = require(Paths.shared.Quests.QuestConstants)
-local DataController = require(Paths.controllers.DataController)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
+local QuestUtil = require(Paths.Shared.Quests.QuestUtil)
+local QuestConstants = require(Paths.Shared.Quests.QuestConstants)
+local DataController = require(Paths.Controllers.DataController)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
 
 function QuestController.getQuestProgress(quest: QuestConstants.Quest)
 	local progress = DataController.get(QuestUtil.getStatAddress(quest.Stat))

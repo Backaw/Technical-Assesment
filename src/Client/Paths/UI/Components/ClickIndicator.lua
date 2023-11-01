@@ -5,9 +5,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UDim2Util = require(Paths.shared.Utils.UDim2Util)
-local TweenUtil = require(Paths.shared.Utils.TweenUtil)
-local DeviceUtil = require(Paths.controllers.Utils.DeviceUtil)
+local UDim2Util = require(Paths.Shared.Utils.UDim2Util)
+local TweenUtil = require(Paths.Shared.Utils.TweenUtil)
+local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 
 local screen: ScreenGui = Players.LocalPlayer.PlayerGui.Mouse
 local clickIndicator: Frame = screen.ClickIndicator

@@ -5,8 +5,8 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local TweenableValue = require(Paths.shared.TweenableValue)
-local Shaker = require(Paths.shared.Shaker)
+local TweenableValue = require(Paths.Shared.TweenableValue)
+local Shaker = require(Paths.Shared.Shaker)
 
 local FIRST_PERSON_THRESHOLD = 0.5
 

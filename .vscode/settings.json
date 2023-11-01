@@ -14,10 +14,13 @@
     "editor.defaultFormatter": "JohnnyMorganz.stylua"
   },
   "search.exclude": {
+    "Cmdr": true,
+    "GA-SDK-ROBLOX": true,
     "Janitor": true,
+    "ProfileService": true,
     "roact": true,
     "roact-rodux": true,
-    "rodux": true,
-    "roblox-lua-promise": true
+    "roblox-lua-promise": true,
+    "rodux": true
   }
 }

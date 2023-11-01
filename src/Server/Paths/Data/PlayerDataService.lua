@@ -8,14 +8,14 @@ local PlayerDataService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Remotes = require(Paths.shared.Remotes)
-local Signal = require(Paths.shared.Signal)
-local DataUtil = require(Paths.shared.Data.DataUtil)
-local DataConstants = require(Paths.shared.Data.DataConstants)
+local Remotes = require(Paths.Shared.Remotes)
+local Signal = require(Paths.Shared.Signal)
+local DataUtil = require(Paths.Shared.Data.DataUtil)
+local DataConstants = require(Paths.Shared.Data.DataConstants)
 local ProfileService = require(ServerScriptService.ProfileService)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local PlayersService = require(Paths.services.PlayersService)
-local Promise = require(Paths.shared.Packages.Promise)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local PlayersService = require(Paths.Services.PlayersService)
+local Promise = require(Paths.Shared.Packages.Promise)
 
 local DONT_SAVE_DATA = false
 
@@ -29,8 +29,8 @@ local reconcilers: { Pre: { (DataUtil.Store) -> () }, Post: { (DataUtil.Store) -
 -------------------------------------------------------------------------------
 -- PUBLIC MEMBERS
 -------------------------------------------------------------------------------
-PlayerDataService.profiles = {}
-PlayerDataService.updated = Signal.new() --> (event: string, player: Player, newValue: any, eventMeta: table?)
+PlayerDataService.Profiles = {}
+PlayerDataService.Updated = Signal.new() --> (event: string, player: Player, newValue: any, eventMeta: table?)
 
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
@@ -65,7 +65,7 @@ function PlayerDataService.registerReconciler(reconciler: (DataUtil.Store) -> ()
 end
 
 function PlayerDataService.get(player: Player, address: string): DataUtil.Data
-	local profile = PlayerDataService.profiles[player]
+	local profile = PlayerDataService.Profiles[player]
 	if profile then
 		return DataUtil.getFromAddress(profile.Data, address)
 	else
@@ -74,14 +74,14 @@ function PlayerDataService.get(player: Player, address: string): DataUtil.Data
 end
 
 function PlayerDataService.set(player: Player, address: string, newValue: any, event: string?, eventMeta: table?)
-	local profile = PlayerDataService.profiles[player]
+	local profile = PlayerDataService.Profiles[player]
 
 	if profile then
 		DataUtil.setFromAddress(profile.Data, address, newValue)
 		Remotes.fireClient(player, "DataUpdated", address, newValue, event, eventMeta)
 
 		if event then
-			PlayerDataService.updated:Fire(event, player, newValue, eventMeta)
+			PlayerDataService.Updated:Fire(event, player, newValue, eventMeta)
 		end
 
 		return newValue
@@ -135,7 +135,7 @@ function PlayerDataService.multiply(player: Player, address: string, scalar: num
 end
 
 function PlayerDataService.wipe(player: Player)
-	local profile = PlayerDataService.profiles[player]
+	local profile = PlayerDataService.Profiles[player]
 
 	profile.Data = nil
 	player:Kick("DATA WIPE " .. player.Name)
@@ -176,7 +176,7 @@ function PlayerDataService.loadPlayer(player: Player)
 
 			reconcile(profile.Data, defaultData)
 			profile:ListenToRelease(function()
-				PlayerDataService.profiles[player] = nil
+				PlayerDataService.Profiles[player] = nil
 				player:Kick("Data profile released " .. player.Name)
 			end)
 
@@ -191,7 +191,7 @@ function PlayerDataService.loadPlayer(player: Player)
 
 			local function load()
 				Remotes.fireClient(player, "DataInitialized", profile.Data)
-				PlayerDataService.profiles[player] = profile
+				PlayerDataService.Profiles[player] = profile
 
 				resolve()
 				cancelDataInitialization()
@@ -225,6 +225,9 @@ function PlayerDataService.loadPlayer(player: Player)
 	end)
 end
 
+-------------------------------------------------------------------------------
+-- LOGIC
+-------------------------------------------------------------------------------
 Remotes.declareEvent("DataUpdated")
 Remotes.declareEvent("DataInitialized")
 

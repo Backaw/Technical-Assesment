@@ -3,13 +3,13 @@ local GameAnalyticsService = {}
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local GameAnalytics = require(Paths.shared.Packages.GameAnalytics)
-local GameConstants = require(Paths.shared.Game.GameConstants)
-local ProductUtil = require(Paths.shared.Products.ProductUtil)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local PlayersService = require(Paths.services.PlayersService)
-local CoinService = require(Paths.services.CoinService)
-local GameUtil = require(Paths.shared.Game.GameUtil)
+local GameAnalytics = require(Paths.Shared.Packages.GameAnalytics)
+local GameConstants = require(Paths.Shared.Game.GameConstants)
+local ProductUtil = require(Paths.Shared.Products.ProductUtil)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local PlayersService = require(Paths.Services.PlayersService)
+local CurrencyService = require(Paths.Services.CurrencyService)
+local GameUtil = require(Paths.Shared.Game.GameUtil)
 
 local DEBUGGING = false
 
@@ -59,7 +59,7 @@ function GameAnalyticsService.init()
 			reportErrors = true,
 
 			availableResourceCurrencies = { "Coin" },
-			availableResourceItemTypes = CoinService.getResourceTypes(),
+			availableResourceItemTypes = CurrencyService.getResourceTypes(),
 			availableGamepasses = TableUtil.getKeys(ProductUtil.getGamepassProducts()),
 		})
 	end

@@ -2,12 +2,12 @@ local CharacterController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local CharacterUtil = require(Paths.shared.Character.CharacterUtil)
-local TransitionController = require(Paths.controllers.UI.Transitions.TransitionController)
-local CameraController = require(Paths.controllers.CameraController)
-local UIController = require(Paths.controllers.UI.UIController)
-local InstanceUtil = require(Paths.shared.Utils.InstanceUtil)
-local UIConstants = require(Paths.controllers.UI.UIConstants)
+local CharacterUtil = require(Paths.Shared.Character.CharacterUtil)
+local TransitionController = require(Paths.Controllers.UI.Transitions.TransitionController)
+local CameraController = require(Paths.Controllers.CameraController)
+local UIController = require(Paths.Controllers.UI.UIController)
+local InstanceUtil = require(Paths.Shared.Utils.InstanceUtil)
+local UIConstants = require(Paths.Controllers.UI.UIConstants)
 
 local RESPAWN_TIME = Players.RespawnTime
 

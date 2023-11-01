@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 local Paths = require(ServerScriptService.Paths)
-local Remotes = require(Paths.shared.Remotes)
+local Remotes = require(Paths.Shared.Remotes)
 
 local placeId = game.PlaceId
 

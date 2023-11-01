@@ -2,16 +2,17 @@ local ProductController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Remotes = require(Paths.shared.Remotes)
-local ProductUtil = require(Paths.shared.Products.ProductUtil)
-local ProductConstants = require(Paths.shared.Products.ProductConstants)
-local CurrencyConstants = require(Paths.shared.Currency.CurrencyConstants)
-local CoinController = require(Paths.controllers.CoinController)
-local Snackbar = require(Paths.controllers.UI.Components.Snackbar)
-local Promise = require(Paths.shared.Packages.Promise)
-local DataController = require(Paths.controllers.DataController)
-local Signal = require(Paths.shared.Signal)
-local Sounds = require(Paths.shared.Sounds)
+local Remotes = require(Paths.Shared.Remotes)
+local ProductUtil = require(Paths.Shared.Products.ProductUtil)
+local ProductConstants = require(Paths.Shared.Products.ProductConstants)
+local CurrencyConstants = require(Paths.Shared.Currency.CurrencyConstants)
+local CurrencyController = require(Paths.Controllers.CurrencyController)
+local CurrencyUtil = require(Paths.Shared.Currency.CurrencyUtil)
+local Snackbar = require(Paths.Controllers.UI.Components.Snackbar)
+local Promise = require(Paths.Shared.Packages.Promise)
+local DataController = require(Paths.Controllers.DataController)
+local Signal = require(Paths.Shared.Signal)
+local Sounds = require(Paths.Shared.Sounds)
 
 local DEBUGGING = false
 
@@ -46,22 +47,11 @@ function ProductController.promptPurchase(product: ProductConstants.Product, cou
 	local price = product.Price
 
 	local success
-	if price.Currency == CurrencyConstants.Currencies.Coin then
-		if CoinController.transact(-price.Amount * count) then
+	if CurrencyUtil.isInGameCurrency(price.Currency) then
+		if CurrencyController.transact(price.Currency, -price.Amount * count) then
 			success = true
 		else
-			Snackbar.error("Not enough cash")
-
-			--[[ local amountNeeded = price.Amount - CoinController.get()
-			for cashYield, cashProduct in pairs(ProductConstants.Products.Coin) do
-				if tonumber(cashYield) >= amountNeeded then
-					task.spawn(function()
-						ProductController.promptPurchase(cashProduct)
-					end)
-					break
-				end
-			end *]]
-
+			Snackbar.error(("Not enough %s"):format(price.Currency))
 			return false
 		end
 	elseif ProductUtil.isPremium(product) then

@@ -3,10 +3,10 @@ local Snackbar = {}
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local TemplateUtil = require(Paths.shared.Utils.TemplateUtil)
-local TweenUtil = require(Paths.shared.Utils.TweenUtil)
-local Toggle = require(Paths.shared.Toggle)
-local Signal = require(Paths.shared.Signal)
+local TemplateUtil = require(Paths.Shared.Utils.TemplateUtil)
+local TweenUtil = require(Paths.Shared.Utils.TweenUtil)
+local Toggle = require(Paths.Shared.Toggle)
+local Signal = require(Paths.Shared.Signal)
 
 local HEIGHT = 0.15
 local BUMP_LENGTH = 0.5
@@ -17,7 +17,7 @@ local FADE_OUT_TWEEN_INFO = TweenInfo.new(LIFETIME * 0.25, Enum.EasingStyle.Line
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
 -------------------------------------------------------------------------------
-local screen: ScreenGui = Paths.ui:WaitForChild("Snackbars")
+local screen: ScreenGui = Paths.UI:WaitForChild("Snackbars")
 local container: Frame = screen.Container
 local constructor = TemplateUtil.constructor(container.TEMP_SNACKBAR)
 

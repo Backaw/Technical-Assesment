@@ -23,11 +23,11 @@ local INITIALIZING = {
 	script.Parent:WaitForChild("GameAnalyticsClient"),
 }
 
-Paths.controllers = script
-Paths.shared = ReplicatedStorage.Modules
-Paths.assets = ReplicatedStorage.Assets
-Paths.ui = Players.LocalPlayer.PlayerGui
-Paths.initialized = LoadingController.loaded
+Paths.Controllers = script
+Paths.Shared = ReplicatedStorage.Modules
+Paths.Assets = ReplicatedStorage.Assets
+Paths.UI = Players.LocalPlayer.PlayerGui
+Paths.Initialized = LoadingController.Loaded
 
 task.defer(function()
 	local ping = os.clock()
@@ -55,7 +55,7 @@ task.defer(function()
 		end)
 	end
 
-	Paths.initialized:andThen(function()
+	Paths.Initialized:andThen(function()
 		print(string.format("✅ Client loaded in %.6f seconds (v%s)", os.clock() - ping, GameConstants.Version))
 	end)
 

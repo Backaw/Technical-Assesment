@@ -2,19 +2,19 @@ local ItemService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Remotes = require(Paths.shared.Remotes)
-local Signal = require(Paths.shared.Signal)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local ItemUtil = require(Paths.shared.Items.ItemUtil)
-local ItemConstants = require(Paths.shared.Items.ItemConstants)
-local ProductConstants = require(Paths.shared.Products.ProductConstants)
-local ProductService = require(Paths.services.Products.ProductService)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local QuestService = require(Paths.services.QuestService)
-local QuestConstants = require(Paths.shared.Quests.QuestConstants)
-local PlayersService = require(Paths.services.PlayersService)
-local CurrencyConstants = require(Paths.shared.Currency.CurrencyConstants)
-local GameAnalyticsService = require(Paths.services.GameAnalyticsService)
+local Remotes = require(Paths.Shared.Remotes)
+local Signal = require(Paths.Shared.Signal)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local ItemUtil = require(Paths.Shared.Items.ItemUtil)
+local ItemConstants = require(Paths.Shared.Items.ItemConstants)
+local ProductConstants = require(Paths.Shared.Products.ProductConstants)
+local ProductService = require(Paths.Services.Products.ProductService)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local QuestService = require(Paths.Services.QuestService)
+local QuestConstants = require(Paths.Shared.Quests.QuestConstants)
+local PlayersService = require(Paths.Services.PlayersService)
+local CurrencyConstants = require(Paths.Shared.Currency.CurrencyConstants)
+local GameAnalyticsService = require(Paths.Services.GameAnalyticsService)
 
 type Validator = (Player) -> boolean
 
@@ -28,8 +28,8 @@ local validators: { [table]: Validator } = {}
 -------------------------------------------------------------------------------
 -- PUBLIC MEMBERS
 -------------------------------------------------------------------------------
-ItemService.equippedChanged = Signal.new() -- (player : Player, itemType : String, itemName : string)
-ItemService.itemAcquired = Signal.new() -- (player : Player, itemType : String, itemName : string)
+ItemService.EquippedChanged = Signal.new() -- (player : Player, itemType : String, itemName : string)
+ItemService.ItemAcquired = Signal.new() -- (player : Player, itemType : String, itemName : string)
 
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
@@ -69,7 +69,7 @@ function ItemService.giveItem(player: Player, itemType: string, itemName: string
 		Name = itemName,
 	})
 
-	ItemService.itemAcquired:Fire(player, itemType, itemName)
+	ItemService.ItemAcquired:Fire(player, itemType, itemName)
 	if not loaned then
 		GameAnalyticsService.addEvent("DesignEvent", player.UserId, {
 			eventId = ("%s:%s:%s"):format("ItemUnlocked", itemType, itemName),
@@ -106,7 +106,7 @@ function ItemService.changeEquippedItem(player: Player, itemType: string, itemNa
 		return false
 	end
 
-	ItemService.equippedChanged:Fire(player, itemType, itemName)
+	ItemService.EquippedChanged:Fire(player, itemType, itemName)
 	local address = ItemUtil.getEquippedItemAddressFromType(itemType)
 
 	PlayerDataService.set(player, address, itemName, "ItemEquippedChanged", {
@@ -122,14 +122,14 @@ end
 -- LOGIC
 -------------------------------------------------------------------------------
 -- EVENT HANDLERS
-ProductService.productPurchased:Connect(function(player: Player, product: ProductConstants.Product)
+ProductService.ProductPurchased:Connect(function(player: Player, product: ProductConstants.Product)
 	local itemType = product.Type
 	if ItemConstants.Types[itemType] then
 		ItemService.giveItem(player, itemType, product.Name)
 	end
 end)
 
-QuestService.questCompleted:Connect(function(player: Player, quest: QuestConstants.Quest)
+QuestService.QuestCompleted:Connect(function(player: Player, quest: QuestConstants.Quest)
 	for itemType, items in pairs(ItemConstants.Items) do
 		for _, item in pairs(items) do
 			if item.Requirement == quest then

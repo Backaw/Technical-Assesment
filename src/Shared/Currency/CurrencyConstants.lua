@@ -9,6 +9,8 @@ CurrencyConstants.Currencies = {
 	Free = "Free",
 }
 
+CurrencyConstants.IngameCurrencies = { CurrencyConstants.Currencies.Coin }
+
 CurrencyConstants.InfoType = {
 	[CurrencyConstants.Currencies.GamePass] = Enum.InfoType.GamePass,
 	[CurrencyConstants.Currencies.DevProduct] = Enum.InfoType.Product,

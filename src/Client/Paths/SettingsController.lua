@@ -2,13 +2,13 @@ local SettingsController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local DataController = require(Paths.controllers.DataController)
-local SettingsConstants = require(Paths.shared.Constants.SettingsConstants)
-local Remotes = require(Paths.shared.Remotes)
-local Signal = require(Paths.shared.Signal)
-local Limiter = require(Paths.shared.Limiter)
+local DataController = require(Paths.Controllers.DataController)
+local SettingsConstants = require(Paths.Shared.Constants.SettingsConstants)
+local Remotes = require(Paths.Shared.Remotes)
+local Signal = require(Paths.Shared.Signal)
+local Limiter = require(Paths.Shared.Limiter)
 
-SettingsController.optionToggled = Signal.new() -- (option : string, value : boolean)
+SettingsController.OptionToggled = Signal.new() -- (option : string, value : boolean)
 
 local cache = DataController.get("Settings") :: { [string]: boolean }
 
@@ -27,7 +27,7 @@ function SettingsController.set(option: SettingsConstants.Option, value: boolean
 	isOptionValid(option)
 
 	cache[option.Name] = value
-	SettingsController.optionToggled:Fire(option, cache[option.Name])
+	SettingsController.OptionToggled:Fire(option, cache[option.Name])
 
 	Limiter.indecisive("ServerSettingToggling", option.Name, 0.2, function()
 		Remotes.fireServer("SettingOptionToggled", option.Name, value)
@@ -36,7 +36,7 @@ end
 
 function SettingsController.onOptionToggled(option: SettingsConstants.Option, handler: (boolean) -> ())
 	handler(SettingsController.get(option))
-	return SettingsController.optionToggled:Connect(function(toggledOption, toggle)
+	return SettingsController.OptionToggled:Connect(function(toggledOption, toggle)
 		if toggledOption == option then
 			handler(toggle)
 		end

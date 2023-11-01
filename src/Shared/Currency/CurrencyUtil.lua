@@ -12,6 +12,10 @@ function CurrencyUtil.getAddress(currency: string)
 	return "Currencies." .. currency
 end
 
+function CurrencyUtil.isInGameCurrency(currency: string)
+	return CurrencyConstants.IngameCurrencies[currency] ~= nil
+end
+
 function CurrencyUtil.getMultiplierAddress(currency: string)
 	-- ERROR: Invallid currency
 	if not CurrencyConstants.Currencies[currency] then

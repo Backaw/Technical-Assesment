@@ -3,13 +3,13 @@ local CmdrController = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Permissions = require(Paths.shared.Permissions)
+local Permissions = require(Paths.Shared.Permissions)
 local Cmdr = require(ReplicatedStorage:WaitForChild("CmdrClient"))
-local Button = require(Paths.controllers.UI.Components.Button)
+local Button = require(Paths.Controllers.UI.Components.Button)
 
 local ACTIVATION_KEYS = { Enum.KeyCode.Semicolon }
 
-local toggleButton = Paths.ui.TopBar.Cmdr
+local toggleButton = Paths.UI.TopBar.Cmdr
 
 if Permissions.canRunCommands(Players.LocalPlayer) then
 	Cmdr:SetEnabled(true)
@@ -17,7 +17,7 @@ if Permissions.canRunCommands(Players.LocalPlayer) then
 	Cmdr:SetHideOnLostFocus(false)
 
 	toggleButton.Visible = true
-	Button.new(toggleButton).pressed:Connect(function()
+	Button.new(toggleButton).Pressed:Connect(function()
 		Cmdr:Toggle()
 	end)
 else

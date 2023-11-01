@@ -2,8 +2,8 @@ local UnitTestingController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UnitTester = require(Paths.shared.UnitTester)
+local UnitTester = require(Paths.Shared.UnitTester)
 
-UnitTester.run(Paths.controllers)
+UnitTester.run(Paths.Controllers)
 
 return UnitTestingController

@@ -4,11 +4,11 @@ local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Signal = require(Paths.shared.Signal)
-local Component = require(Paths.controllers.UI.Components.Component)
-local ClickIndicator = require(Paths.controllers.UI.Components.ClickIndicator)
-local Sounds = require(Paths.shared.Sounds)
-local DeviceUtil = require(Paths.controllers.Utils.DeviceUtil)
+local Signal = require(Paths.Shared.Signal)
+local Component = require(Paths.Controllers.UI.Components.Component)
+local ClickIndicator = require(Paths.Controllers.UI.Components.ClickIndicator)
+local Sounds = require(Paths.Shared.Sounds)
+local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 
 local CLICK_COOLDOWN = 0.05
 
@@ -31,11 +31,11 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	-------------------------------------------------------------------------------
 	-- PUBLIC MEMBERS
 	-------------------------------------------------------------------------------
-	button.pressed = Signal.new()
-	button.released = Signal.new()
-	button.hoverStarted = Signal.new()
-	button.hoverEnded = Signal.new()
-	button.clicked = Signal.new()
+	button.Pressed = Signal.new()
+	button.Released = Signal.new()
+	button.HoverStarted = Signal.new()
+	button.HoverEnded = Signal.new()
+	button.Clicked = Signal.new()
 
 	-------------------------------------------------------------------------------
 	-- PUBLIC METHODS
@@ -55,7 +55,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 				instance:GetPropertyChangedSignal("Visible"):Connect(function()
 					if instance.Visible == false and hovering then
 						hovering = false
-						button.hoverEnded:Fire()
+						button.HoverEnded:Fire()
 					end
 				end)
 			end
@@ -97,7 +97,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 				ClickIndicator.play()
 			end
 
-			button.pressed:Fire()
+			button.Pressed:Fire()
 
 			if not mute then
 				Sounds.play("ButtonClick")
@@ -111,7 +111,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 					or userInputType == Enum.UserInputType.Touch
 					or userInputType == Enum.UserInputType.Gamepad1
 				then
-					button.released:Fire()
+					button.Released:Fire()
 					connection:Disconnect()
 				end
 			end)
@@ -124,18 +124,18 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	guiObject.MouseEnter:Connect(function()
 		if not hovering then
 			hovering = true
-			button.hoverStarted:Fire()
+			button.HoverStarted:Fire()
 		end
 	end)
 
 	guiObject.MouseLeave:Connect(function()
 		if hovering then
 			hovering = false
-			button.hoverEnded:Fire()
+			button.HoverEnded:Fire()
 		end
 	end)
 
-	button.released:Connect(function()
+	button.Released:Connect(function()
 		if not DeviceUtil.isGamepadInput() then
 			local mouseLocation = UserInputService:GetMouseLocation() + Vector2.new(0, -GUI_INSET_Y)
 			local buttonPosition = guiObject.AbsolutePosition
@@ -151,7 +151,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 			end
 		end
 
-		button.clicked:Fire()
+		button.Clicked:Fire()
 	end)
 
 	button:GetMaid():Add(GuiService.Changed:Connect(function(changed)
@@ -162,10 +162,10 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 		local selected = GuiService.SelectedObject == guiObject
 		if selected and not hovering then
 			hovering = true
-			button.hoverStarted:Fire()
+			button.HoverStarted:Fire()
 		elseif not selected and hovering then
 			hovering = false
-			button.hoverEnded:Fire()
+			button.HoverEnded:Fire()
 		end
 	end))
 

@@ -2,13 +2,13 @@ local PriceLabel = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Component = require(Paths.controllers.UI.Components.Component)
-local CurrencyConstants = require(Paths.shared.Currency.CurrencyConstants)
-local TemplateUtil = require(Paths.shared.Utils.TemplateUtil)
-local UIScaleController = require(Paths.controllers.UI.UIScaleController)
-local Images = require(Paths.shared.Images)
-local StringUtil = require(Paths.shared.Utils.StringUtil)
-local TextLabelUtil = require(Paths.controllers.UI.Utils.TextLabelUtil)
+local Component = require(Paths.Controllers.UI.Components.Component)
+local CurrencyConstants = require(Paths.Shared.Currency.CurrencyConstants)
+local TemplateUtil = require(Paths.Shared.Utils.TemplateUtil)
+local UIScaleController = require(Paths.Controllers.UI.UIScaleController)
+local Images = require(Paths.Shared.Images)
+local StringUtil = require(Paths.Shared.Utils.StringUtil)
+local TextLabelUtil = require(Paths.Controllers.UI.Utils.TextLabelUtil)
 
 export type PriceLabel = typeof(PriceLabel.new())
 

@@ -3,11 +3,11 @@ local BadgeUnlockingService = {}
 local BadgeService = game:GetService("BadgeService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local PlayersService = require(Paths.services.PlayersService)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local BadgeConstants = require(Paths.shared.Constants.BadgeConstants)
-local GameUtil = require(Paths.shared.Game.GameUtil)
-local QuestUtil = require(Paths.shared.Quests.QuestUtil)
+local PlayersService = require(Paths.Services.PlayersService)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local BadgeConstants = require(Paths.Shared.Constants.BadgeConstants)
+local GameUtil = require(Paths.Shared.Game.GameUtil)
+local QuestUtil = require(Paths.Shared.Quests.QuestUtil)
 
 local DEBUGGING = false
 
@@ -66,7 +66,7 @@ BadgeUnlockingService.loadPlayer = PlayersService.promisifyLoader(function(playe
 
 			if not checkCanAward(PlayerDataService.get(player, QuestUtil.getStatAddress(criteria.Stat))) then
 				local connection
-				connection = PlayerDataService.updated:Connect(function(event, otherPlayer, value, metadata)
+				connection = PlayerDataService.Updated:Connect(function(event, otherPlayer, value, metadata)
 					if event == "QuestStatChanged" and otherPlayer == player and metadata.Stat == criteria.Stat then
 						checkCanAward(value)
 						connection:Disconnect()

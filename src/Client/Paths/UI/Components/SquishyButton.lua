@@ -84,11 +84,11 @@ function SquishyButton.new(guiObject: GuiButton, objectToScale: GuiObject?, pres
 			TweenUtil.bind(uiScale, "Squish", TweenService:Create(uiScale, TWEEN_INFO, { Scale = scale }))
 		end
 
-		squishyButton.hoverStarted:Connect(function()
+		squishyButton.HoverStarted:Connect(function()
 			tweenHoverScale(hoverScale)
 		end)
 
-		squishyButton.hoverEnded:Connect(function()
+		squishyButton.HoverEnded:Connect(function()
 			tweenHoverScale(1)
 		end)
 	end
@@ -96,11 +96,11 @@ function SquishyButton.new(guiObject: GuiButton, objectToScale: GuiObject?, pres
 	-------------------------------------------------------------------------------
 	-- Animations
 	-------------------------------------------------------------------------------
-	squishyButton.pressed:Connect(function()
+	squishyButton.Pressed:Connect(function()
 		tweenPressedScale(UDim2Util.uDim2Multiply(initSize, pressedScale))
 	end)
 
-	squishyButton.released:Connect(function()
+	squishyButton.Released:Connect(function()
 		tweenPressedScale(initSize)
 	end)
 

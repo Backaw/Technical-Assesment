@@ -2,9 +2,9 @@ local Transitions = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local CameraController = require(Paths.controllers.CameraController)
-local Toggle = require(Paths.shared.Toggle)
-local Limiter = require(Paths.shared.Limiter)
+local CameraController = require(Paths.Controllers.CameraController)
+local Toggle = require(Paths.Shared.Toggle)
+local Limiter = require(Paths.Shared.Limiter)
 
 local isOpen = Toggle.new(false)
 local handlers = {}

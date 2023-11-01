@@ -2,6 +2,7 @@ local RewardConstants = {}
 
 export type Reward = {
 	Type: "Coin",
+	Currency: string,
 	Amount: number,
 } | {
 	Type: "Item",

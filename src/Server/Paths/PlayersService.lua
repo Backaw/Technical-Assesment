@@ -3,25 +3,25 @@ local PlayersService = {}
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Promise = require(Paths.shared.Packages.Promise)
-local Maid = require(Paths.shared.Maid)
-local GameUtil = require(Paths.shared.Game.GameUtil)
+local Promise = require(Paths.Shared.Packages.Promise)
+local Maid = require(Paths.Shared.Maid)
+local GameUtil = require(Paths.Shared.Game.GameUtil)
 
 type Promise = typeof(Promise.new())
 
 local DEBUG = false
 local LOADERS = {
-	Paths.services.PlaytimeRewardService,
-	Paths.services.Data.PlayerDataService,
-	Paths.services.GameAnalyticsService,
-	Paths.services.Products.ProductService,
-	Paths.services.Data.LeaderstatService,
-	Paths.services.CharactersService,
-	Paths.services.ItemService,
-	Paths.services.BadgeUnlockingService,
-	Paths.services.LoginService,
-	Paths.services.FriendsService,
-	Paths.services.QuestService,
+	Paths.Services.PlaytimeRewardService,
+	Paths.Services.Data.PlayerDataService,
+	Paths.Services.GameAnalyticsService,
+	Paths.Services.Products.ProductService,
+	Paths.Services.Data.LeaderstatService,
+	Paths.Services.CharactersService,
+	Paths.Services.ItemService,
+	Paths.Services.BadgeUnlockingService,
+	Paths.Services.LoginService,
+	Paths.Services.FriendsService,
+	Paths.Services.QuestService,
 }
 
 -------------------------------------------------------------------------------

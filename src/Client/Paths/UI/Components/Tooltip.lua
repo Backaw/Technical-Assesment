@@ -5,11 +5,10 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Button = require(Paths.controllers.UI.Components.Button)
-local Maid = require(Paths.shared.Maid)
-local DeviceUtil = require(Paths.controllers.Utils.DeviceUtil)
-local UIController = require(Paths.controllers.UI.UIController)
-local UIConstants = require(Paths.controllers.UI.UIConstants)
+local Button = require(Paths.Controllers.UI.Components.Button)
+local Maid = require(Paths.Shared.Maid)
+local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
+local UIController = require(Paths.Controllers.UI.UIController)
 
 local uiStateMachine = UIController.getStateMachine()
 
@@ -19,7 +18,7 @@ local GUI_INSET_Y = GuiService:GetGuiInset().Y
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
 -------------------------------------------------------------------------------
-local screen: ScreenGui = Paths.ui.Tooltips
+local screen: ScreenGui = Paths.UI.Tooltips
 
 local maid = Maid.new()
 local opened: Button.Button?
@@ -41,7 +40,7 @@ function Tooltip.bindToButton(tooltip: GuiObject, button: Button.Button, onRende
 	end
 
 	-- TODO: Add some sort of limiter
-	button.hoverStarted:Connect(function()
+	button.HoverStarted:Connect(function()
 		maid:Cleanup()
 		opened = button
 
@@ -67,7 +66,7 @@ function Tooltip.bindToButton(tooltip: GuiObject, button: Button.Button, onRende
 		end
 	end)
 
-	button.hoverEnded:Connect(function()
+	button.HoverEnded:Connect(function()
 		close()
 	end)
 end

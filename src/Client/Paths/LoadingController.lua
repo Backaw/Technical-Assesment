@@ -35,7 +35,7 @@ local tween: Tween
 -------------------------------------------------------------------------------
 -- PUBLIC MEMEBERS
 -------------------------------------------------------------------------------
-LoadingController.loaded = DeferredPromise.new()
+LoadingController.Loaded = DeferredPromise.new()
 
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
@@ -100,7 +100,7 @@ function LoadingController.start()
 						),
 					}):andThen(function()
 						screen:Destroy()
-						LoadingController.loaded.resolve()
+						LoadingController.Loaded.resolve()
 					end)
 				end
 			end)

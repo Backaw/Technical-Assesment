@@ -2,8 +2,8 @@ local ContextActionButtonOverlay = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local SquishyButton = require(Paths.controllers.UI.Components.SquishyButton)
-local DeviceUtil = require(Paths.controllers.Utils.DeviceUtil)
+local SquishyButton = require(Paths.Controllers.UI.Components.SquishyButton)
+local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 
 local BASE_JUMP_BUTTON_OFFSET = Vector2.new(95, 90)
 local BASE_JUMP_BUTTON_SIZE = Vector2.new(70, 70)
@@ -11,7 +11,7 @@ local BASE_JUMP_BUTTON_SIZE = Vector2.new(70, 70)
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
 -------------------------------------------------------------------------------
-local screen: ScreenGui = Paths.ui.MobileButtons
+local screen: ScreenGui = Paths.UI.MobileButtons
 
 -------------------------------------------------------------------------------
 -- PRIVATE MEHODS
@@ -51,7 +51,7 @@ end
 if DeviceUtil.isMobile() then
 	screen.Enabled = true
 
-	local jumpButton = Paths.ui.TouchGui.TouchControlFrame.JumpButton
+	local jumpButton = Paths.UI.TouchGui.TouchControlFrame.JumpButton
 	local offsetScale = getScaleFromRatio(jumpButton.AbsoluteSize / BASE_JUMP_BUTTON_SIZE)
 	local sizeScale = getScaleFromRatio(
 		Vector2.new(math.abs(jumpButton.Position.X.Offset), math.abs(jumpButton.Position.Y.Offset)) / BASE_JUMP_BUTTON_OFFSET

@@ -1,14 +1,13 @@
 local QuestService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
-local Workspace = game:GetService("Workspace")
 local Paths = require(ServerScriptService.Paths)
-local Signal = require(Paths.shared.Signal)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local GameAnalyticsService = require(Paths.services.GameAnalyticsService)
-local TableUtil = require(Paths.shared.Utils.TableUtil)
-local QuestConstants = require(Paths.shared.Quests.QuestConstants)
-local PlayersService = require(Paths.services.PlayersService)
+local Signal = require(Paths.Shared.Signal)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local GameAnalyticsService = require(Paths.Services.GameAnalyticsService)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local QuestConstants = require(Paths.Shared.Quests.QuestConstants)
+local PlayersService = require(Paths.Services.PlayersService)
 
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
@@ -18,7 +17,7 @@ local statToQuest: { [string]: { QuestConstants.Quest } } = {}
 -------------------------------------------------------------------------------
 -- PUBLIC MEMBERS
 -------------------------------------------------------------------------------
-QuestService.questCompleted = Signal.new() --> (player : Player, category : string, quest : QuestConstants.Quest )
+QuestService.QuestCompleted = Signal.new() --> (player : Player, category : string, quest : QuestConstants.Quest )
 
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
@@ -57,7 +56,7 @@ local function checkCompletion(player: Player, stat: string)
 				Name = name,
 			})
 
-			QuestService.questCompleted:Fire(player, quest)
+			QuestService.QuestCompleted:Fire(player, quest)
 			GameAnalyticsService.addEvent("DesignEvent", player.UserId, {
 				eventId = ("%s:%s:%s"):format("QuestCompleted", "Persistent", name), -- Don't remove the persisitent part
 			})

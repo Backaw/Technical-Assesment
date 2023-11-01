@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 
-local screen: ScreenGui = Paths.ui.Transitions
+local screen: ScreenGui = Paths.UI.Transitions
 local frame: ImageLabel = screen.Eye
 
 local TWEEN_INFO = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)

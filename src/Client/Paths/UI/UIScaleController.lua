@@ -85,7 +85,7 @@ end
 -- PUBLIC METHODS
 -------------------------------------------------------------------------------
 function UIScaleController.isObjectCustomScaled(object: GuiObject)
-	if not object:IsDescendantOf(Paths.ui) then
+	if not object:IsDescendantOf(Paths.UI) then
 		return false
 	end
 
@@ -109,7 +109,7 @@ function UIScaleController.isObjectCustomScaled(object: GuiObject)
 end
 
 function UIScaleController.isObjectScaled(object: GuiObject)
-	if not object:IsDescendantOf(Paths.ui) then
+	if not object:IsDescendantOf(Paths.UI) then
 		return false
 	end
 
@@ -143,7 +143,7 @@ function UIScaleController.init()
 	local screenGuis = {}
 	for _, screenGui in pairs(StarterGui:GetChildren()) do
 		if screenGui:IsA("ScreenGui") then
-			table.insert(screenGuis, Paths.ui:WaitForChild(screenGui.Name))
+			table.insert(screenGuis, Paths.UI:WaitForChild(screenGui.Name))
 		end
 	end
 
@@ -151,7 +151,7 @@ function UIScaleController.init()
 		registerInstance(descendant)
 	end)
 
-	Paths.ui.DescendantRemoving:Connect(function(descendant)
+	Paths.UI.DescendantRemoving:Connect(function(descendant)
 		registeredInitProps[descendant] = nil
 	end)
 end

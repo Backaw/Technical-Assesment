@@ -2,10 +2,10 @@ local LoginService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local PlayersService = require(Paths.services.PlayersService)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local QuestService = require(Paths.services.QuestService)
-local GameConstants = require(Paths.shared.Game.GameConstants)
+local PlayersService = require(Paths.Services.PlayersService)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local QuestService = require(Paths.Services.QuestService)
+local GameConstants = require(Paths.Shared.Game.GameConstants)
 
 LoginService.loadPlayer = PlayersService.promisifyLoader(function(player)
 	local loginTime = os.time()

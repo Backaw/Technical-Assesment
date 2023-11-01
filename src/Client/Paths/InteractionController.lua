@@ -4,8 +4,8 @@ local CollectionService = game:GetService("CollectionService")
 local ProximityPromptService = game:GetService("ProximityPromptService")
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UIController = require(Paths.controllers.UI.UIController)
-local UIUtil = require(Paths.controllers.UI.Utils.UIUtil)
+local UIController = require(Paths.Controllers.UI.UIController)
+local UIUtil = require(Paths.Controllers.UI.Utils.UIUtil)
 
 local MAX_PROMPTS_VISIBLE = 1
 local MAX_ACTIVATION_DISTANCE = 20

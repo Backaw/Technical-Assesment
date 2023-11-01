@@ -3,12 +3,12 @@ local SoundController = {}
 local Players = game:GetService("Players")
 local SoundService = game:GetService("SoundService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Sounds = require(Paths.shared.Sounds)
-local SettingsController = require(Paths.controllers.SettingsController)
-local SettingsConstants = require(Paths.shared.Constants.SettingsConstants)
-local ArrayUtil = require(Paths.shared.Utils.ArrayUtil)
+local Sounds = require(Paths.Shared.Sounds)
+local SettingsController = require(Paths.Controllers.SettingsController)
+local SettingsConstants = require(Paths.Shared.Constants.SettingsConstants)
+local ArrayUtil = require(Paths.Shared.Utils.ArrayUtil)
 
-Paths.initialized:andThen(function()
+Paths.Initialized:andThen(function()
 	local songs = {}
 	for _, song in ipairs(SoundService.Music:GetChildren()) do
 		if song:IsA("Sound") then

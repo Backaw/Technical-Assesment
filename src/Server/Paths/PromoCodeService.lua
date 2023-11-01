@@ -2,10 +2,10 @@ local PromoCodeService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Remotes = require(Paths.shared.Remotes)
-local PromoCodeConstants = require(Paths.shared.Constants.PromoCodeConstants)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local RewardService = require(Paths.services.RewardService)
+local Remotes = require(Paths.Shared.Remotes)
+local PromoCodeConstants = require(Paths.Shared.Constants.PromoCodeConstants)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local RewardService = require(Paths.Services.RewardService)
 
 Remotes.bindFunctions({
 	RedeemCode = function(player: Player, code: string)

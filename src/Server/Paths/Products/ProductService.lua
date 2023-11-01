@@ -4,16 +4,17 @@ local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local MarketplaceService = game:GetService("MarketplaceService")
 local Paths = require(ServerScriptService.Paths)
-local Promise = require(Paths.shared.Packages.Promise)
-local Signal = require(Paths.shared.Signal)
-local Remotes = require(Paths.shared.Remotes)
-local CurrencyConstants = require(Paths.shared.Currency.CurrencyConstants)
-local ProductConstants = require(Paths.shared.Products.ProductConstants)
-local ProductUtil = require(Paths.shared.Products.ProductUtil)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local CoinService = require(Paths.services.CoinService)
-local PlayersService = require(Paths.services.PlayersService)
-local GameAnalytics = require(Paths.shared.Packages.GameAnalytics)
+local Promise = require(Paths.Shared.Packages.Promise)
+local Signal = require(Paths.Shared.Signal)
+local Remotes = require(Paths.Shared.Remotes)
+local CurrencyConstants = require(Paths.Shared.Currency.CurrencyConstants)
+local CurrencyUtil = require(Paths.Shared.Currency.CurrencyUtil)
+local ProductConstants = require(Paths.Shared.Products.ProductConstants)
+local ProductUtil = require(Paths.Shared.Products.ProductUtil)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local CurrencyService = require(Paths.Services.CurrencyService)
+local PlayersService = require(Paths.Services.PlayersService)
+local GameAnalytics = require(Paths.Shared.Packages.GameAnalytics)
 
 local MAX_PRICE_LOAD_ATTEMPTS = 5
 
@@ -28,7 +29,7 @@ local validators: { [ProductConstants.Product]: Validator } = {}
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
 -------------------------------------------------------------------------------
-ProductService.productPurchased = Signal.new() --> (player : Player, product : ProductConstants.Product)
+ProductService.ProductPurchased = Signal.new() --> (player : Player, product : ProductConstants.Product)
 
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
@@ -59,8 +60,8 @@ function ProductService.purchaseProduct(player: Player, productType: string, pro
 	local price = product.Price
 	if price.Currency == CurrencyConstants.Currencies.Free then
 		success = true
-	elseif price.Currency == CurrencyConstants.Currencies.Coin then
-		success = CoinService.transact(player, -price.Amount * count, productType, productName, true)
+	elseif CurrencyUtil.isInGameCurrency(price.Currency) then
+		success = CurrencyService.transact(player, price.Currency, -price.Amount * count, productType, productName, true)
 	else
 		count = 1
 
@@ -98,7 +99,7 @@ function ProductService.purchaseProduct(player: Player, productType: string, pro
 	end
 
 	if success then
-		ProductService.productPurchased:Fire(player, product, count)
+		ProductService.ProductPurchased:Fire(player, product, count)
 	end
 
 	return success
@@ -124,7 +125,7 @@ ProductService.loadPlayer = PlayersService.promisifyLoader(function(player: Play
 			end, 3):andThen(function(owned)
 				if owned then
 					for _, product in products do
-						ProductService.productPurchased:Fire(player, product)
+						ProductService.ProductPurchased:Fire(player, product)
 					end
 
 					PlayerDataService.set(player, address, id, "GamePassPurchased", {
@@ -172,9 +173,6 @@ function ProductService.start()
 					:andThen(function(info)
 						priceInRobux = info.PriceInRobux
 					end)
-					:catch(function()
-						priceInRobux = 0
-					end)
 					:finally(function()
 						for _, product in pairs(products) do
 							product.Price.PriceInRobux = priceInRobux
@@ -198,7 +196,7 @@ end
 
 MarketplaceService.ProcessReceipt = function(info)
 	GameAnalytics:ProcessReceiptCallback(info)
-	return Enum.ProductPurchaseDecision.PurchaseGranted
+	return Enum.ProductPurchasedecision.PurchaseGranted
 end
 
 Remotes.bindFunctions({
@@ -208,7 +206,5 @@ Remotes.bindFunctions({
 		return ProductConstants.Products
 	end,
 })
-
-Remotes.declareEvent("ShopItemsRotated")
 
 return ProductService

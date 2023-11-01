@@ -2,13 +2,13 @@ local DataController = {}
 
 local Players = game:GetService("Players")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local Signal = require(Paths.shared.Signal)
-local Promise = require(Paths.shared.Packages.Promise)
-local Remotes = require(Paths.shared.Remotes)
-local DataUtil = require(Paths.shared.Data.DataUtil)
+local Signal = require(Paths.Shared.Signal)
+local Promise = require(Paths.Shared.Packages.Promise)
+local Remotes = require(Paths.Shared.Remotes)
+local DataUtil = require(Paths.Shared.Data.DataUtil)
 
 local bank: DataUtil.Store = {}
-DataController.updated = Signal.new() -- {event: string, newValue: any, eventMeta: table?}
+DataController.Updated = Signal.new() -- {event: string, newValue: any, eventMeta: table?}
 
 -- We use addresses on client too only bc it's convinient to copy same addresses as client
 function DataController.get(address: string)
@@ -34,7 +34,7 @@ Remotes.bindEvents({
 		loader:andThen(function() --- Ensures data has loaded before any changes are made, just in case
 			DataUtil.setFromAddress(bank, address, newValue)
 			if event then
-				DataController.updated:Fire(event, newValue, eventMeta or {})
+				DataController.Updated:Fire(event, newValue, eventMeta or {})
 			end
 		end)
 	end,

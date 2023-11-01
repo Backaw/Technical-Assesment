@@ -2,12 +2,12 @@ local SettingsService = {}
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
-local Remotes = require(Paths.shared.Remotes)
-local Signal = require(Paths.shared.Signal)
-local PlayerDataService = require(Paths.services.Data.PlayerDataService)
-local SettingsConstants = require(Paths.shared.Constants.SettingsConstants)
+local Remotes = require(Paths.Shared.Remotes)
+local Signal = require(Paths.Shared.Signal)
+local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local SettingsConstants = require(Paths.Shared.Constants.SettingsConstants)
 
-SettingsService.optionToggled = Signal.new() -->  (player: Player, option: string, toggle: boolean)
+SettingsService.OptionToggled = Signal.new() -->  (player: Player, option: string, toggle: boolean)
 
 Remotes.bindEvents({
 	SettingOptionToggled = function(player: Player, option: string, toggle: boolean)
@@ -17,7 +17,7 @@ Remotes.bindEvents({
 		end
 
 		PlayerDataService.set(player, "Settings." .. option, toggle)
-		SettingsService.optionToggled:Fire(player, option, toggle)
+		SettingsService.OptionToggled:Fire(player, option, toggle)
 	end,
 })
 

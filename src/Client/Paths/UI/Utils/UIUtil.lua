@@ -4,11 +4,11 @@ local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
-local UIConstants = require(Paths.controllers.UI.UIConstants)
-local Button = require(Paths.controllers.UI.Components.Button)
-local Maid = require(Paths.shared.Maid)
-local KeybindSprites = require(Paths.controllers.UI.KeybindSprites)
-local DeviceUtil = require(Paths.controllers.Utils.DeviceUtil)
+local UIConstants = require(Paths.Controllers.UI.UIConstants)
+local Button = require(Paths.Controllers.UI.Components.Button)
+local Maid = require(Paths.Shared.Maid)
+local KeybindSprites = require(Paths.Controllers.UI.KeybindSprites)
+local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 
 function UIUtil.isStateInteractionPermissive(state: string)
 	return table.find(UIConstants.InteractionPermissiveStates, state) ~= nil
@@ -88,7 +88,7 @@ function UIUtil.bindInputToButton(
 			if callback then
 				callback()
 			else
-				button.pressed:Fire()
+				button.Pressed:Fire()
 			end
 		end
 	end))
@@ -102,7 +102,7 @@ function UIUtil.bindInputToButton(
 		local inputType = input.UserInputType
 		if keycode == keyboardInput or inputType == keyboardInput or keycode == gamepadInput or inputType == gamepadInput then
 			if not callback then
-				button.released:Fire()
+				button.Released:Fire()
 			end
 		end
 	end))
