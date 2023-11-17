@@ -33,9 +33,9 @@ local function loadCharacter(character: Model)
 			prefix = "⚒️ "
 		end
 
-		local nametag: BillboardGui = ServerStorage.Nametag:Clone()
-		nametag.Parent = character.Head
-		nametag.TextLabel.Text = prefix .. player.DisplayName
+		local nameTag: BillboardGui = ServerStorage.NameTag:Clone()
+		nameTag.Parent = character.Head
+		nameTag.TextLabel.Text = prefix .. player.DisplayName
 
 		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
 	end)
