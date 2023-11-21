@@ -58,7 +58,9 @@ function UIController.openScreenState(state: string)
 end
 
 function UIController.resetToHUD(exceptions: { string }?)
-	uiStateMachine:PopUpto(UIConstants.States.HUD, exceptions)
+	if uiStateMachine:HasState(UIConstants.States.HUD) then
+		uiStateMachine:PopUpto(UIConstants.States.HUD, exceptions)
+	end
 end
 
 uiStateMachine:RegisterGlobalCallback(function(fromState, toState, data)

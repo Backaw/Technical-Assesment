@@ -1,8 +1,6 @@
 local ItemConstants = {}
 
-ItemConstants.Types = {
-	Tool = "Tool",
-}
+ItemConstants.Types = {}
 
 ItemConstants.Items = {}
 for itemType in pairs(ItemConstants.Types) do

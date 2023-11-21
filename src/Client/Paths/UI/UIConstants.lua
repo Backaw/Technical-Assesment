@@ -3,26 +3,9 @@ local UIConstants = {}
 UIConstants.InitialState = "Nothing"
 UIConstants.States = {
 	HUD = "HUD",
-	Rides = "Rides",
-	PromoCodes = "PromoCodes",
-	Settings = "Settings",
-	PlaytimeRewards = "PlaytimeRewards",
-	RidePlacement = "RidePlacement",
-	ProductPurchaseConfirmation = "ProductPurchaseConfirmation",
-	RewardWheel = "RewardWheel",
-	Reward = "Reward",
-	SeasonPass = "SeasonPass",
-	Trails = "Trails",
 }
 
-UIConstants.HUDPermissiveStates = {
-	UIConstants.States.Rides,
-	UIConstants.States.PromoCodes,
-	UIConstants.States.Settings,
-	UIConstants.States.PlaytimeRewards,
-	UIConstants.States.SeasonPass,
-	UIConstants.States.Trails,
-}
+UIConstants.HUDPermissiveStates = {}
 
 UIConstants.PsuedoStates = {}
 
