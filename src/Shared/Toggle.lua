@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --[[
     Wrapper for a boolean variable that manages potentially conflicting value changes.
 
@@ -17,12 +18,25 @@
 
 local Toggle = {}
 
-function Toggle.new(initialValue: boolean, onToggled: (value: boolean) -> ()?)
+local Signal = require(ReplicatedStorage.Modules.Signal)
+
+function Toggle.new(initialValue: boolean)
 	local toggle = {}
 
+	-------------------------------------------------------------------------------
+	-- PRIVATE MEMBERS
+	-------------------------------------------------------------------------------
 	local jobs: { any } = {}
 	local value = initialValue
 
+	-------------------------------------------------------------------------------
+	-- PUBLIC MEMBERS
+	-------------------------------------------------------------------------------
+	toggle.Changed = Signal.new() --> (newValue : boolean)
+
+	-------------------------------------------------------------------------------
+	-- PUBLIC METHODS
+	-------------------------------------------------------------------------------
 	--[[
         Change the value, if flipping back the value to the initial value, all jobs must agree
         RETURNS: Whether or not value was changed
@@ -40,9 +54,7 @@ function Toggle.new(initialValue: boolean, onToggled: (value: boolean) -> ()?)
 				value = not initialValue
 				changed = true
 
-				if onToggled then
-					onToggled(newValue)
-				end
+				toggle.Changed:Fire(newValue)
 			end
 
 			table.insert(jobs, job)
@@ -59,9 +71,7 @@ function Toggle.new(initialValue: boolean, onToggled: (value: boolean) -> ()?)
 				value = initialValue
 				changed = true
 
-				if onToggled then
-					onToggled(newValue)
-				end
+				toggle.Changed:Fire(newValue)
 			end
 		end
 
@@ -75,9 +85,7 @@ function Toggle.new(initialValue: boolean, onToggled: (value: boolean) -> ()?)
 	end
 
 	function toggle:ForceSet(newValue)
-		if onToggled then
-			onToggled(newValue)
-		end
+		toggle.Changed:Fire(newValue)
 
 		jobs = {}
 		value = newValue

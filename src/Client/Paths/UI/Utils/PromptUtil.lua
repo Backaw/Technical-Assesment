@@ -24,36 +24,7 @@ blurEffect.Parent = Lighting
 local backgroundScreen: ScreenGui = Paths.UI.Background
 local backgroundFrame: Frame = backgroundScreen.Frame
 
-local cosmeticsEnabled = Toggle.new(false, function(toggle)
-	if toggle then
-		TweenUtil.bind(
-			blurEffect,
-			BINDING_KEY,
-			TweenService:Create(
-				blurEffect,
-				TweenInfo.new(ANIMATION_LENGTH, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
-				{ Size = OPEN_BLUR_SIZE }
-			)
-		)
-
-		PromptUtil.openBackground()
-
-		CameraController.setFov(OPEN_FOV, ANIMATION_LENGTH)
-	else
-		TweenUtil.bind(
-			blurEffect,
-			BINDING_KEY,
-			TweenService:Create(
-				blurEffect,
-				TweenInfo.new(ANIMATION_LENGTH, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
-				{ Size = 0 }
-			)
-		)
-
-		backgroundScreen.Enabled = false
-		CameraController.resetFov(ANIMATION_LENGTH)
-	end
-end)
+local cosmeticsEnabled = Toggle.new(false)
 
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
@@ -129,5 +100,36 @@ end
 -- INITIALIZATION
 -------------------------------------------------------------------------------
 backgroundScreen.Enabled = false
+
+cosmeticsEnabled.Changed:Connect(function(toggle)
+	if toggle then
+		TweenUtil.bind(
+			blurEffect,
+			BINDING_KEY,
+			TweenService:Create(
+				blurEffect,
+				TweenInfo.new(ANIMATION_LENGTH, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
+				{ Size = OPEN_BLUR_SIZE }
+			)
+		)
+
+		PromptUtil.openBackground()
+
+		CameraController.setFov(OPEN_FOV, ANIMATION_LENGTH)
+	else
+		TweenUtil.bind(
+			blurEffect,
+			BINDING_KEY,
+			TweenService:Create(
+				blurEffect,
+				TweenInfo.new(ANIMATION_LENGTH, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
+				{ Size = 0 }
+			)
+		)
+
+		backgroundScreen.Enabled = false
+		CameraController.resetFov(ANIMATION_LENGTH)
+	end
+end)
 
 return PromptUtil

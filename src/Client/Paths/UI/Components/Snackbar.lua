@@ -22,11 +22,7 @@ local container: Frame = screen.Container
 local constructor = TemplateUtil.constructor(container.TEMP_SNACKBAR)
 
 local delayEnded = Signal.new()
-local isDelayed = Toggle.new(false, function(toggle)
-	if not toggle then
-		delayEnded:Fire()
-	end
-end)
+local isDelayed = Toggle.new(false)
 
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
@@ -119,5 +115,11 @@ function Snackbar.clear()
 end
 
 screen.Enabled = true
+
+isDelayed.Changed:Connect(function(toggle)
+	if not toggle then
+		delayEnded:Fire()
+	end
+end)
 
 return Snackbar
