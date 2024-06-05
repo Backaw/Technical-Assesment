@@ -1,0 +1,19 @@
+local BoostConstants = {}
+
+-- Backwards compatibility
+local boosts: { [string]: {
+	Name: string?,
+	Icon: string?,
+	IconThick: string?,
+	Multiplicand: string,
+	MultiplierAddend: number,
+} } =
+	{}
+
+BoostConstants.Boosts = boosts
+
+for name, boost in pairs(boosts) do
+	boost.Name = name
+end
+
+return BoostConstants

@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
+local Workspace = game:GetService("Workspace")
 local Paths = {}
 
 Paths.Services = script
@@ -7,27 +9,67 @@ Paths.Shared = ReplicatedStorage.Modules
 Paths.Initialized = require(Paths.Shared.DeferredPromise).new()
 Paths.Assets = ReplicatedStorage.Assets
 
+local DEBUG = false
+
+-------------------------------------------------------------------------------
+-- PRIVATE FUNCTIONS
+-------------------------------------------------------------------------------
+local function moveToStorage(moving: Folder, destination: Instance)
+	for _, child in pairs(moving:GetChildren()) do
+		local existingChild = destination:FindFirstChild(child.Name)
+		if existingChild then
+			for _, descendant in pairs(child:GetChildren()) do
+				descendant.Parent = existingChild
+			end
+			child:Destroy()
+		else
+			child.Parent = destination
+		end
+	end
+end
+
+local function loadModule(moduleScript)
+	local since = os.clock()
+
+	local returning = require(moduleScript)
+
+	if DEBUG then
+		print(("Loaded %s (%s)"):format(moduleScript.Name, os.clock() - since))
+	end
+
+	return returning
+end
+
+-------------------------------------------------------------------------------
+-- LOGIC
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+moveToStorage(Workspace.Assets.ReplicatedStorage, Paths.Assets)
+moveToStorage(Workspace.Assets.ServerStorage, ServerStorage)
+
 task.delay(0, function()
 	local ping = os.clock()
 
 	local initializing = {
-		require(Paths.Shared.Utils.ParticleUtil),
+		loadModule(Paths.Shared.Utils.ParticleUtil),
 
 		-- Services
-		require(Paths.Services.SoftShutdownService),
-		require(Paths.Services.UnitTestingService),
-		require(Paths.Services.CollisionService),
-		require(Paths.Services.PlayersService),
-		require(Paths.Services.CurrencyService),
-		require(Paths.Services.Products.ProductService),
-		require(Paths.Services.SettingsService),
-		require(Paths.Services.Cmdr.CmdrService),
-		require(Paths.Services.GameAnalyticsService),
-		require(Paths.Services.PromoCodeService),
-		require(Paths.Services.ItemService),
-		-- require(Paths.Services.Data.LeaderboardService),
-		require(Paths.Services.RewardService),
-		require(Paths.Services.FriendsService),
+		loadModule(Paths.Services.SoftShutdownService),
+		loadModule(Paths.Services.UnitTestingService),
+		loadModule(Paths.Services.Products.ItemProductsService),
+		loadModule(Paths.Services.CollisionService),
+		loadModule(Paths.Services.PlayersService),
+		loadModule(Paths.Services.CurrencyService),
+		loadModule(Paths.Services.Products.ProductService),
+		loadModule(Paths.Services.SettingsService),
+		loadModule(Paths.Services.Cmdr.CmdrService),
+		loadModule(Paths.Services.GameAnalyticsService),
+		loadModule(Paths.Services.PromoCodeService),
+		loadModule(Paths.Services.ItemService),
+
+		-- loadModule(Paths.Services.Data.LeaderboardService),
+		loadModule(Paths.Services.RewardService),
+		loadModule(Paths.Services.FriendsService),
 	}
 
 	for _, module in ipairs(initializing) do
@@ -46,7 +88,7 @@ task.delay(0, function()
 		end)
 	end
 
-	Paths.Initialized.resolve()
+	Paths.Initialized:invokeResolve()
 
 	print("Welcome to NEW GAME")
 	print(string.format("✅ Server loaded in %.6f seconds", os.clock() - ping))

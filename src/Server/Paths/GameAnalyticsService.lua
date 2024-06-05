@@ -10,11 +10,12 @@ local TableUtil = require(Paths.Shared.Utils.TableUtil)
 local PlayersService = require(Paths.Services.PlayersService)
 local CurrencyService = require(Paths.Services.CurrencyService)
 local GameUtil = require(Paths.Shared.Game.GameUtil)
+local CurrencyConstants = require(Paths.Shared.Currency.CurrencyConstants)
 
 local DEBUGGING = false
 
 local IS_LIVE = GameUtil.isLive()
-local IS_TRACKING = false and (RunService:IsStudio() or IS_LIVE)
+local IS_TRACKING = false -- (RunService:IsStudio() or IS_LIVE)
 
 local onPlayerReady: BindableEvent = game:GetService("ReplicatedStorage"):WaitForChild("OnPlayerReadyEvent")
 
@@ -58,9 +59,9 @@ function GameAnalyticsService.init()
 			automaticSendBusinessEvents = true,
 			reportErrors = true,
 
-			availableResourceCurrencies = { "Coin" },
+			availableResourceCurrencies = CurrencyConstants.IngameCurrencies,
 			availableResourceItemTypes = CurrencyService.getResourceTypes(),
-			availableGamepasses = TableUtil.getKeys(ProductUtil.getGamepassProducts()),
+			availableGamepasses = TableUtil.getKeys(ProductUtil.getRobuxProducts()[Enum.InfoType.GamePass]),
 		})
 	end
 end

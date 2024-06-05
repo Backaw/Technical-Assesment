@@ -24,14 +24,14 @@ function CurrencyController.get(currency: string)
 	return cache[currency]
 end
 
-function CurrencyController.transact(currency: string, transacting: number, serverInitiated: true?)
+function CurrencyController.transact(currency: string, transacting: number, serverInitiated: boolean?)
 	if transacting > 0 and not serverInitiated then
-		transacting *= DataController.get(CurrencyUtil.getMultiplierAddress(currency))
+		transacting *= DataController.get(CurrencyUtil.getMultiplierAddress(currency)) or 1
 	end
 
 	local nextValue = cache[currency] + math.floor(transacting)
 	if nextValue >= 0 then
-		CurrencyController.Changed:Fire(currency, nextValue, cache)
+		CurrencyController.Changed:Fire(currency, nextValue, cache[currency])
 		cache[currency] = nextValue
 
 		return true

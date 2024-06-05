@@ -9,6 +9,7 @@ task.spawn(function()
 	local Cmdr = require(Paths.Shared.Packages.Cmdr)
 
 	-- Cmdr:RegisterDefaultCommands()
+	Cmdr:RegisterCommand(Paths.Shared.Packages.Cmdr:WaitForChild("Server commands").help)
 
 	Cmdr:RegisterCommandsIn(script.Parent.Commands)
 	Cmdr:RegisterTypesIn(script.Parent.Types)

@@ -13,6 +13,7 @@ local FULL = 1 + EASE
 local FULL_LOAD_LENGTH = 1
 
 local LOGO_ROTATION_BOUNDS = 2
+
 local DEBUG = false
 
 -------------------------------------------------------------------------------
@@ -94,13 +95,18 @@ function LoadingController.start()
 							{ BackgroundTransparency = 1, ImageTransparency = 1 }
 						),
 						TweenService:Create(
+							container.TextLabel,
+							TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+							{ TextTransparency = 1 }
+						),
+						TweenService:Create(
 							logo.UIScale,
 							TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
 							{ Scale = 0 }
 						),
 					}):andThen(function()
 						screen:Destroy()
-						LoadingController.Loaded.resolve()
+						LoadingController.Loaded:invokeResolve()
 					end)
 				end
 			end)
@@ -115,27 +121,33 @@ end
 -------------------------------------------------------------------------------
 
 -- Let all UI load
-LoadingController.addTask("Waiting for GUI", function()
-	local loaded
-	while not loaded do
-		loaded = true
+do
+	LoadingController.addTask("Waiting for GUI", function()
+		local loaded
+		while not loaded do
+			loaded = true
 
-		for _, screenGui in pairs(StarterGui:GetChildren()) do
-			local playerCounterpart = playerGui:FindFirstChild(screenGui.Name)
-			if not playerCounterpart then
-				loaded = false
-				break
+			for _, screenGui in pairs(StarterGui:GetChildren()) do
+				if screenGui.Name == "Cmdr" then
+					continue
+				end
+
+				local playerCounterpart = playerGui:FindFirstChild(screenGui.Name)
+				if not playerCounterpart then
+					loaded = false
+					break
+				end
+
+				if #screenGui:GetDescendants() < #playerCounterpart:GetDescendants() then
+					loaded = false
+					break
+				end
 			end
 
-			if #screenGui:GetDescendants() < #playerCounterpart:GetDescendants() then
-				loaded = false
-				break
-			end
+			task.wait(0.2)
 		end
-
-		task.wait(0.2)
-	end
-end)
+	end)
+end
 
 controls:Disable()
 

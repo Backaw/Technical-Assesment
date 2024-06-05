@@ -1,7 +1,8 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local Paths = require(ServerScriptService.Paths)
 local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
 
 return function(_, player: Player)
-	PlayerDataService.wipe(player)
+	TableUtil.print(PlayerDataService.get(player, ""))
 end

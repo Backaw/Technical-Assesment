@@ -20,7 +20,6 @@ local loader = Promise.new(function(resolve)
 	local cleanup
 	cleanup = Remotes.bindEventTemp("DataInitialized", function(data)
 		bank = data
-		warn("PLAYER DATA", bank)
 
 		cleanup()
 		resolve()

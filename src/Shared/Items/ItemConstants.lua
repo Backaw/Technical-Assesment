@@ -1,15 +1,21 @@
 local ItemConstants = {}
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CurrencyConstants = require(ReplicatedStorage.Modules.Currency.CurrencyConstants)
+local QuestConstants = require(ReplicatedStorage.Modules.Quests.QuestConstants)
+
+export type ItemSource = CurrencyConstants.Price | { Level: number } | nil | QuestConstants.Quest
+
+export type Item = {
+	Name: string,
+	Alias: string?,
+	Type: string,
+	Icon: string,
+	Source: ItemSource,
+}
+
 ItemConstants.Types = {}
 
-ItemConstants.Items = {}
-for itemType in pairs(ItemConstants.Types) do
-	local items = require(script.Parent[itemType .. "Items"]).Items
-	ItemConstants.Items[itemType] = items
-
-	for key, item in pairs(items) do
-		item.Name = key
-	end
-end
+ItemConstants.FriendlyTypeNames = {}
 
 return ItemConstants

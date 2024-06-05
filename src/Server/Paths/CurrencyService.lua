@@ -9,12 +9,16 @@ local ProductService: typeof(require(Paths.Services.Products.ProductService))
 local ProductConstants = require(Paths.Shared.Products.ProductConstants)
 local GameAnalytics = require(Paths.Shared.Packages.GameAnalytics)
 local GameAnalyticsService: typeof(require(Paths.Services.GameAnalyticsService))
+local TableUtil = require(Paths.Shared.Utils.TableUtil)
+local QuestConstants = require(Paths.Shared.Quests.QuestConstants)
+local QuestService: typeof(require(Paths.Services.QuestService))
 
 -------------------------------------------------------------------------------
 -- PUBLIC MEMBERS
 -------------------------------------------------------------------------------
 CurrencyService.ResourceType = {
 	Reward = "Reward",
+	-- Product types are added here too
 }
 
 -------------------------------------------------------------------------------
@@ -27,7 +31,7 @@ function CurrencyService.transact(
 	transacting: number,
 	resourceType: string?,
 	itemId: string?,
-	clientInitiated: true?
+	clientInitiated: boolean?
 )
 	-- RETURN: Item type doesn't exist
 	if resourceType and not CurrencyService.ResourceType[resourceType] then
@@ -37,13 +41,15 @@ function CurrencyService.transact(
 	local address = CurrencyUtil.getAddress(currency)
 	if PlayerDataService.get(player, address) + transacting >= 0 then
 		if transacting > 0 then
-			transacting *= PlayerDataService.get(player, CurrencyUtil.getMultiplierAddress(currency))
+			transacting *= PlayerDataService.get(player, CurrencyUtil.getMultiplierAddress(currency)) or 1
 		end
+
+		transacting = math.floor(transacting)
 
 		PlayerDataService.increment(player, address, transacting, "CurrencyChanged", {
 			ClientInitiated = clientInitiated,
 			Currency = currency,
-			Transacting = math.floor(transacting),
+			Transacting = transacting,
 		})
 
 		if resourceType then
@@ -56,17 +62,51 @@ function CurrencyService.transact(
 			})
 		end
 
-		return true
+		return true, transacting
 	end
 
 	return false
 end
 
+function CurrencyService.transactCoins(
+	player: Player,
+	transacting: number,
+	resourceType: string?,
+	itemId: string?,
+	clientInitiated: boolean?
+)
+	local success, transacted =
+		CurrencyService.transact(player, CurrencyConstants.Currencies.Coin, transacting, resourceType, itemId, clientInitiated)
+
+	if success and transacted > 0 then
+		QuestService.incrementStat(player, QuestConstants.Stats.CoinsEarned, transacted)
+	end
+end
+
+function CurrencyService.getResourceTypes()
+	return TableUtil.toArray(CurrencyService.ResourceType)
+end
+
 function CurrencyService.init()
 	ProductService = require(Paths.Services.Products.ProductService)
 	GameAnalyticsService = require(Paths.Services.GameAnalyticsService)
+	QuestService = require(Paths.Services.QuestService)
 
-	-- TODO: Allow puchasing if there is a product with the name available
+	for _, currency in pairs(CurrencyConstants.IngameCurrencies) do
+		-- CONTINUE: Currency isn't purchaseable
+		if not ProductConstants.Types[currency] then
+			continue
+		end
+
+		ProductService.ProductPurchased:Connect(function(player: Player, product: ProductConstants.Product)
+			local amount = tonumber(product.Name)
+			if product.Type == currency and amount then
+				CurrencyService.transact(player, currency, amount, nil, nil, true)
+			elseif product.Type == "Multiplier" and product.Name == "X2_" .. currency then
+				PlayerDataService.increment(player, "Multipliers." .. currency, 1, currency .. "MultiplierChanged")
+			end
+		end)
+	end
 end
 
 return CurrencyService

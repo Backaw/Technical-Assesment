@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ProductConstants = require(ReplicatedStorage.Modules.Products.ProductConstants)
 local CurrencyConstants = require(ReplicatedStorage.Modules.Currency.CurrencyConstants)
 local TableUtil = require(ReplicatedStorage.Modules.Utils.TableUtil)
+local StringUtil = require(ReplicatedStorage.Modules.Utils.StringUtil)
 
 function ProductUtil.getGamepassProducts()
 	return ProductUtil.getRobuxProducts()[Enum.InfoType.GamePass]
@@ -53,6 +54,53 @@ end
 function ProductUtil.isPremium(product: table)
 	local currency = product.Price.Currency
 	return currency == CurrencyConstants.Currencies.DevProduct or currency == CurrencyConstants.Currencies.GamePass
+end
+
+function ProductUtil.getCmdrGamepasses()
+	local passes: { [string]: number } = {}
+
+	for gamepass, products in pairs(ProductUtil.getRobuxProducts()[Enum.InfoType.GamePass]) do
+		for _, product in pairs(products) do
+			passes[product.Name] = gamepass
+		end
+	end
+
+	return passes
+end
+
+function ProductUtil.updateProducts(registering: ProductConstants.ProductCategories, unregistering: ProductConstants.ProductCategories)
+	if unregistering then
+		for productType, removing in pairs(unregistering) do
+			local products = ProductConstants.Products[productType]
+			if not products then
+				warn(("%s is an invalid product type"):format(productType))
+				unregistering[productType] = nil
+
+				continue
+			end
+
+			-- Don't use TableUtil.shallowSubtract cause elements won't be same on server->client
+			for name in pairs(removing) do
+				products[name] = nil
+			end
+		end
+	end
+
+	for productType, newProducts in pairs(registering) do
+		local existingProducts = ProductConstants.Products[productType]
+		if not existingProducts then
+			warn(("%s is an invalid product type"):format(productType))
+			continue
+		end
+
+		TableUtil.shallowUnion(existingProducts, newProducts)
+	end
+
+	return registering, unregistering
+end
+
+function ProductUtil.getDisplayName(product: ProductConstants.Product)
+	return product.Alias or StringUtil.seperateSnakeCase(product.Name)
 end
 
 return ProductUtil

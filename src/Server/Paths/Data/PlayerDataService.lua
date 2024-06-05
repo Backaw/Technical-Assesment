@@ -16,13 +16,14 @@ local ProfileService = require(ServerScriptService.ProfileService)
 local TableUtil = require(Paths.Shared.Utils.TableUtil)
 local PlayersService = require(Paths.Services.PlayersService)
 local Promise = require(Paths.Shared.Packages.Promise)
+local GameUtil = require(Paths.Shared.Game.GameUtil)
 
 local DONT_SAVE_DATA = false
 
 -------------------------------------------------------------------------------
 -- PRIVATE MEMBERS
 -------------------------------------------------------------------------------
-local clientsReadyForData: { [Player]: true? } = {}
+local clientsReadyForData: { [Player]: boolean? } = {}
 local clientReadyForData = Signal.new()
 local reconcilers: { Pre: { (DataUtil.Store) -> () }, Post: { (DataUtil.Store) -> () } } = { Pre = {}, Post = {} }
 
@@ -35,7 +36,7 @@ PlayerDataService.Updated = Signal.new() --> (event: string, player: Player, new
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
 -------------------------------------------------------------------------------
-local function reconcile(data: DataUtil.Store, default: DataUtil.Store, recursiveCase: true?)
+local function reconcile(data: DataUtil.Store, default: DataUtil.Store, recursiveCase: boolean?)
 	if not recursiveCase then
 		for _, reconciler in pairs(reconcilers.Pre) do
 			reconciler(data)
@@ -60,7 +61,7 @@ end
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
 -------------------------------------------------------------------------------
-function PlayerDataService.registerReconciler(reconciler: (DataUtil.Store) -> (), isPreDefaultRecociliation: true?)
+function PlayerDataService.registerReconciler(reconciler: (DataUtil.Store) -> (), isPreDefaultRecociliation: boolean?)
 	table.insert(reconcilers[if isPreDefaultRecociliation then "Pre" else "Post"], reconciler)
 end
 
@@ -150,7 +151,7 @@ function PlayerDataService.loadPlayer(player: Player)
 			until profile
 
 			-- Data was wiped, reconcile so that stuff unloads properly
-			if DONT_SAVE_DATA or not profile.Data then
+			if not profile.Data then
 				profile.Data = {}
 				profile:Reconcile()
 			end
@@ -174,7 +175,11 @@ function PlayerDataService.loadPlayer(player: Player)
 				return
 			end
 
-			reconcile(profile.Data, defaultData)
+			if DONT_SAVE_DATA and not GameUtil.isLive() then
+				profile.Data = {}
+			end
+
+			reconcile(profile.Data, defaultData :: DataUtil.Store)
 			profile:ListenToRelease(function()
 				PlayerDataService.Profiles[player] = nil
 				player:Kick("Data profile released " .. player.Name)

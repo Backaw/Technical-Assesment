@@ -10,7 +10,7 @@ local GameConstants = require(ReplicatedStorage.Modules.Game.GameConstants)
 DataConstants.Version = {
 	Live = 1,
 	QA = 1,
-	Dev = 0,
+	Dev = 1,
 }
 
 local leaderstats: { [string]: string } = {}
@@ -37,8 +37,10 @@ DataConstants.DefaultPlayerData = function()
 
 	store.GamePasses = {}
 	store.DevProducts = {}
+	store.Boosts = {}
 
 	store.EquippedItems = {}
+
 	store.OwnedItems = {}
 	for _, itemType in pairs(ItemConstants.Types) do
 		store.OwnedItems[itemType] = {}

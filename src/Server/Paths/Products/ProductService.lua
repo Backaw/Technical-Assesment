@@ -15,6 +15,9 @@ local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
 local CurrencyService = require(Paths.Services.CurrencyService)
 local PlayersService = require(Paths.Services.PlayersService)
 local GameAnalytics = require(Paths.Shared.Packages.GameAnalytics)
+local DeferredPromise = require(Paths.Shared.DeferredPromise)
+local RewardService = require(Paths.Services.RewardService)
+local GameAnalyticsService = require(Paths.Services.GameAnalyticsService)
 
 local MAX_PRICE_LOAD_ATTEMPTS = 5
 
@@ -23,22 +26,99 @@ type Validator = (Player, number) -> boolean
 -------------------------------------------------------------------------------
 --  PRIVATE MEMBERS
 -------------------------------------------------------------------------------
-local clientRelaying = Promise.resolve()
+local productsInitialized = DeferredPromise.new()
 local validators: { [ProductConstants.Product]: Validator } = {}
 
+local robuxPrices: { [number]: number } = {}
+
 -------------------------------------------------------------------------------
--- PUBLIC METHODS
+-- PUBLIC MEMEBRS
 -------------------------------------------------------------------------------
 ProductService.ProductPurchased = Signal.new() --> (player : Player, product : ProductConstants.Product)
 
 -------------------------------------------------------------------------------
 -- PRIVATE METHODS
 -------------------------------------------------------------------------------
+local function updateRobuxPrices(updating: ProductConstants.ProductCategories)
+	local promises = {}
+	for infoType, idsToProducts in pairs(ProductUtil.getRobuxProducts()) do
+		for id in pairs(idsToProducts) do
+			-- Price has already been retrieved
+			if robuxPrices[id] then
+				continue
+			end
+
+			table.insert(
+				promises,
+				Promise.retry(function()
+					return Promise.new(function(resolve, reject)
+						local success, info = pcall(function()
+							return MarketplaceService:GetProductInfo(id, infoType)
+						end)
+						if success then
+							resolve(info)
+						else
+							reject(info)
+						end
+					end)
+				end, MAX_PRICE_LOAD_ATTEMPTS):andThen(function(info)
+					robuxPrices[id] = info.PriceInRobux
+				end)
+			)
+		end
+	end
+
+	if productsInitialized:getStatus() == Promise.Status.Started then
+		Promise.all(promises)
+			:andThen(function()
+				productsInitialized:invokeResolve()
+			end)
+			:await()
+	else
+		productsInitialized = productsInitialized:andThen(function()
+			return Promise.all(promises)
+		end)
+
+		productsInitialized:await()
+	end
+
+	productsInitialized
+		:andThen(function()
+			for _, products in pairs(updating) do
+				for _, product in pairs(products) do
+					local id = product.Price.Id
+					if id then
+						local price = robuxPrices[id]
+						product.Price.PriceInRobux = price or 0 -- Avoid bugs
+					end
+				end
+			end
+		end)
+		:await()
+end
+
+-------------------------------------------------------------------------------
+-- PUBLIC METHODS
+-------------------------------------------------------------------------------
 function ProductService.hasGamePass(player: Player, product: ProductConstants.Product)
 	return PlayerDataService.get(player, ProductUtil.getGamepassAddress(product)) ~= nil
 end
 
-function ProductService.purchaseProduct(player: Player, productType: string, productName: string, count: number?)
+function ProductService.giveGamepass(player: Player, id: number, verified: boolean?)
+	local address = "GamePasses." .. id
+	if verified or not PlayerDataService.get(player, address) then
+		PlayerDataService.set(player, address, true, "GamePassPurchased", {
+			Id = id,
+		})
+	end
+end
+
+function ProductService.giveProduct(player: Player, product: ProductConstants.Product, count: number?)
+	ProductService.ProductPurchased:Fire(player, product)
+	Remotes.fireClient(player, "ProductGiven", product.Type, product.Name, count or 1)
+end
+
+function ProductService.purchaseProduct(player: Player, productType: string, productName: string, count: number?, source: string)
 	local success = false
 
 	count = count or 1
@@ -65,8 +145,9 @@ function ProductService.purchaseProduct(player: Player, productType: string, pro
 	else
 		count = 1
 
+		local id
 		if price.Currency == CurrencyConstants.Currencies.DevProduct then
-			local id = price.Id
+			id = price.Id
 
 			MarketplaceService:PromptProductPurchase(player, price.Id)
 			_, _, _, success = Promise.fromEvent(MarketplaceService.PromptProductPurchaseFinished, function(purchasorId, purchaseId)
@@ -82,19 +163,23 @@ function ProductService.purchaseProduct(player: Player, productType: string, pro
 			if ProductService.hasGamePass(player, product) then
 				success = true
 			else
-				local id = price.Id
+				id = price.Id
 
-				MarketplaceService:PromptGamePassPurchase(player, price.Id)
+				MarketplaceService:PromptGamePassPurchase(player, id)
 				_, _, _, success = Promise.fromEvent(MarketplaceService.PromptGamePassPurchaseFinished, function(purchasor, purchaseId)
 					return player == purchasor and id == purchaseId
 				end):await()
 
 				if success then
-					PlayerDataService.set(player, ProductUtil.getGamepassAddress(product), true, "GamePassPurchased", {
-						Id = id,
-					})
+					ProductService.giveGamepass(player, id, true)
 				end
 			end
+		end
+
+		if source and id then
+			GameAnalyticsService.addEvent("DesignEvent", player.UserId, {
+				eventId = ("%s:%s:%s:%s"):format("PremiumProductPrompted", tostring(id), tostring(source), tostring(success)),
+			})
 		end
 	end
 
@@ -107,6 +192,23 @@ end
 
 function ProductService.registerValidator(product: ProductConstants.Product, validator: Validator)
 	validators[product] = validator
+end
+
+function ProductService.updateProducts(
+	registering: ProductConstants.ProductCategories,
+	unregistering: ProductConstants.ProductCategories | nil
+)
+	ProductUtil.updateProducts(registering, unregistering)
+
+	for productType, productList in pairs(ProductConstants.Products) do
+		for name, product in pairs(productList) do
+			product.Type = productType
+			product.Name = name
+		end
+	end
+
+	updateRobuxPrices(registering)
+	Remotes.fireAllClients("ProductsUpdated", registering, unregistering)
 end
 
 -- Register items purchased outsite of the game
@@ -125,86 +227,66 @@ ProductService.loadPlayer = PlayersService.promisifyLoader(function(player: Play
 			end, 3):andThen(function(owned)
 				if owned then
 					for _, product in products do
-						ProductService.ProductPurchased:Fire(player, product)
+						ProductService.giveProduct(player, product)
 					end
 
-					PlayerDataService.set(player, address, id, "GamePassPurchased", {
-						Id = id,
-					})
+					ProductService.giveGamepass(player, id, true)
 				end
 			end)
 		end
 	end
-end, "gamepasses")
+end, "Gamepasses")
 
-function ProductService.start()
-	-- Generate complex products
-	for _, generator in pairs(script.Parent.Generators:GetChildren()) do
-		local productType = generator.Name:gsub("ProductGenerator", "")
-
-		-- ERROR: Invalid product type
-		if not ProductConstants.Types[productType] then
-			error(("The following product generator has an invalid name: %s"):format(generator:GetFullName()))
-		end
-
-		ProductConstants.Products[productType] = require(generator).getProducts()
+-------------------------------------------------------------------------------
+-- EVENT HANDLING
+-------------------------------------------------------------------------------
+do
+	-- Fill in missing produt info
+	for _, productType in pairs(ProductConstants.Types) do
+		CurrencyService.ResourceType[productType] = productType
 	end
 
-	-- Apply robux prices
-	local promises = {}
-	for infoType, idsToProducts in pairs(ProductUtil.getRobuxProducts()) do
-		for id, products in pairs(idsToProducts) do
-			local priceInRobux
+	-- Create bundle products
+	for name, bundle in pairs(ProductConstants.Bundles) do
+		local product: ProductConstants.Product = {
+			Name = name,
+			Icon = bundle.Icon,
+			Price = {
+				Currency = CurrencyConstants.Currencies.GamePass,
+				Id = bundle.Gamepass,
+			},
+		}
 
-			table.insert(
-				promises,
-				Promise.retry(function()
-					return Promise.new(function(resolve, reject)
-						local success, info = pcall(function()
-							return MarketplaceService:GetProductInfo(id, infoType)
-						end)
-						if success then
-							resolve(info)
-						else
-							reject(info)
-						end
-					end)
-				end, MAX_PRICE_LOAD_ATTEMPTS)
-					:andThen(function(info)
-						priceInRobux = info.PriceInRobux
-					end)
-					:finally(function()
-						for _, product in pairs(products) do
-							product.Price.PriceInRobux = priceInRobux
-						end
-					end)
-			)
-		end
+		ProductConstants.Products.Bundle[name] = product
+
+		ProductService.ProductPurchased:Connect(function(player, purchasedProduct)
+			if purchasedProduct == product then
+				for _, reward in pairs(bundle.Rewards) do
+					RewardService.award(player, reward, "Bundle" .. name, false)
+				end
+			end
+		end)
 	end
 
-	for productType, productList in pairs(ProductConstants.Products) do
-		for name, product in pairs(productList) do
-			product.Type = productType
-			product.Name = name
-		end
-	end
-
-	clientRelaying = clientRelaying:andThen(function()
-		return Promise.all(promises)
+	task.spawn(function()
+		updateRobuxPrices(ProductConstants.Products)
 	end)
 end
 
 MarketplaceService.ProcessReceipt = function(info)
 	GameAnalytics:ProcessReceiptCallback(info)
-	return Enum.ProductPurchasedecision.PurchaseGranted
+	return Enum.ProductPurchaseDecision.PurchaseGranted
 end
 
 Remotes.bindFunctions({
 	PromptProductPurchase = ProductService.purchaseProduct,
 	GetProducts = function()
-		clientRelaying:await()
+		productsInitialized:await()
 		return ProductConstants.Products
 	end,
 })
+
+Remotes.declareEvent("ProductsUpdated")
+Remotes.declareEvent("ProductGiven")
 
 return ProductService

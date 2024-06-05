@@ -54,6 +54,8 @@ end
 -- LOGIC
 -------------------------------------------------------------------------------
 BadgeUnlockingService.loadPlayer = PlayersService.promisifyLoader(function(player)
+	-- BadgeUnlockingService.awardBadge(player, BadgeConstants.Badges.Play)
+
 	for _, badge in pairs(BadgeConstants.Badges) do
 		local criteria = badge.AwardCriteria
 		if criteria then
