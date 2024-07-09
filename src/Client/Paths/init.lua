@@ -18,6 +18,7 @@ local INITIALIZING = {
 	-- UI
 	script.UI.UIScaleController,
 	script.UI.UIController,
+	script.UI.Utils.UIUtil,
 
 	-- Analytics
 	script.Parent:WaitForChild("GameAnalyticsClient"),

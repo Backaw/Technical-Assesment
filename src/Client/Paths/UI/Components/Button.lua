@@ -9,10 +9,9 @@ local Component = require(Paths.Controllers.UI.Components.Component)
 local ClickIndicator = require(Paths.Controllers.UI.Components.ClickIndicator)
 local Sounds = require(Paths.Shared.Sounds)
 local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
+local UIUtil = require(Paths.Controllers.UI.Utils.UIUtil)
 
 local CLICK_COOLDOWN = 0.05
-
-local GUI_INSET_Y = GuiService:GetGuiInset().Y
 
 export type Button = typeof(Button.new())
 local playerGui = Players.LocalPlayer.PlayerGui
@@ -23,10 +22,12 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	-------------------------------------------------------------------------------
 	-- PRIVATE MEMBERS
 	-------------------------------------------------------------------------------
-	local clickIndicatorEnabled = false
+	local clickIndicatorEnabled = true
 
 	local hovering: boolean = false
 	local clickDebounce = false
+
+	local buttonSizeAtClick: Vector2
 
 	-------------------------------------------------------------------------------
 	-- PUBLIC MEMBERS
@@ -97,6 +98,8 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 				ClickIndicator.play()
 			end
 
+			buttonSizeAtClick = guiObject.AbsoluteSize
+
 			button.Pressed:Fire()
 
 			if not mute then
@@ -136,19 +139,8 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	end)
 
 	button.Released:Connect(function()
-		if not DeviceUtil.isGamepadInput() then
-			local mouseLocation = UserInputService:GetMouseLocation() + Vector2.new(0, -GUI_INSET_Y)
-			local buttonPosition = guiObject.AbsolutePosition
-			local buttonSize = guiObject.AbsoluteSize
-
-			if
-				mouseLocation.X < buttonPosition.X
-				or mouseLocation.X > buttonPosition.X + buttonSize.X
-				or mouseLocation.Y < buttonPosition.Y
-				or mouseLocation.Y > buttonPosition.Y + buttonSize.Y
-			then
-				return
-			end
+		if not DeviceUtil.isGamepadInput() and not UIUtil.isMouseWithinObjectBounds(guiObject, buttonSizeAtClick) then
+			return
 		end
 
 		button.Clicked:Fire()

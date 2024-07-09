@@ -1,19 +1,22 @@
 local RewardConstants = {}
-
 export type Reward = {
-	Type: "Coin",
+	Type: "Currency",
 	Currency: string,
 	Amount: number,
+} | {
+	Type: "Boost",
+	Name: string,
+	LengthInMinutes: number,
 } | {
 	Type: "Item",
 	ItemType: string,
 	ItemName: string,
-	Loan: boolean,
+	Loan: boolean?,
 }
-
 RewardConstants.Types = {
 	Item = "Item",
-	Coin = "Coin",
+	Currency = "Currency",
+	Boost = "Boost",
 }
 
 return RewardConstants

@@ -7,6 +7,8 @@ local UIConstants = require(Paths.Controllers.UI.UIConstants)
 local StringUtil = require(Paths.Shared.Utils.StringUtil)
 local TableUtil = require(Paths.Shared.Utils.TableUtil)
 local UIUtil = require(Paths.Controllers.UI.Utils.UIUtil)
+local DeferredPromise = require(Paths.Shared.DeferredPromise)
+local Promise = require(Paths.Shared.Packages.Promise)
 
 type ScreenStateCallback = ((table?) -> ())?
 type ScreenStateCallbacks = {
@@ -16,10 +18,22 @@ type ScreenStateCallbacks = {
 	Maximize: ScreenStateCallback,
 }
 
+-------------------------------------------------------------------------------
+-- PRIVATE MEMBERS
+-------------------------------------------------------------------------------
 local uiStateMachine = StateMachine.new(TableUtil.toArray(UIConstants.States), UIConstants.InitialState)
 local lastUiStateStack = uiStateMachine:GetStack()
 
 local screenStateCallbacks: { [string]: ScreenStateCallbacks } = {}
+
+-------------------------------------------------------------------------------
+-- PUBLIC MEMBERS
+-------------------------------------------------------------------------------
+UIController.ScreenStateTransition = Promise.resolve()
+
+-------------------------------------------------------------------------------
+-- PUBLIC FUNCTIONS
+-------------------------------------------------------------------------------
 function UIController.getStateMachine()
 	return uiStateMachine
 end
@@ -57,14 +71,15 @@ function UIController.openScreenState(state: string)
 	end
 end
 
-function UIController.resetToHUD(exceptions: { string }?)
-	if uiStateMachine:HasState(UIConstants.States.HUD) then
-		uiStateMachine:PopUpto(UIConstants.States.HUD, exceptions)
+function UIController.resetToHUD()
+	if UIUtil.isStackHUDPermissive(uiStateMachine:GetStack()) then
+		uiStateMachine:PopUpto(UIConstants.States.HUD)
 	end
 end
 
 uiStateMachine:RegisterGlobalCallback(function(fromState, toState, data)
 	local stack = uiStateMachine:GetStack()
+	UIController.ScreenStateTransition = DeferredPromise.new()
 
 	-- Seperate loops so that open is garuanteed to run first, helps PromptUtil background transitions not be choppy
 	for state, callbacks in pairs(screenStateCallbacks) do
@@ -106,6 +121,7 @@ uiStateMachine:RegisterGlobalCallback(function(fromState, toState, data)
 	end
 
 	lastUiStateStack = stack
+	UIController.ScreenStateTransition:invokeResolve()
 end)
 
 return UIController
