@@ -3,8 +3,8 @@ local DebugUtil = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local MathUtil = require(ReplicatedStorage.Modules.Utils.MathUtil)
 
-function DebugUtil.previewCFrame(cframe: CFrame, size: Vector3?, color: Color3?)
-	local preview = Instance.new("WedgePart")
+function DebugUtil.previewCFrame(cframe: CFrame, size: Vector3?, color: Color3?, instance: string?)
+	local preview = Instance.new(instance or "WedgePart")
 	preview.Size = size or Vector3.new(1, 1, 1)
 	preview.CFrame = cframe
 	preview.Color = color or Color3.fromRGB(0, 0, 0)

@@ -6,12 +6,17 @@ local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 local UIConstants = require(Paths.Controllers.UI.UIConstants)
 local Button: typeof(require(Paths.Controllers.UI.Components.Button))
-local Maid = require(Paths.Shared.Maid)
 local KeybindSprites = require(Paths.Controllers.UI.KeybindSprites)
 local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
+local InputUtil = require(Paths.Controllers.Utils.InputUtil)
 
 local GUI_INSET_Y = GuiService:GetGuiInset().Y
 
+export type Input = Enum.UserInputType | Enum.KeyCode | nil
+
+-------------------------------------------------------------------------------
+-- PUBLIC METHODS
+-------------------------------------------------------------------------------
 function UIUtil.isStateInteractionPermissive(state: string)
 	return table.find(UIConstants.InteractionPermissiveStates, state) ~= nil
 end
@@ -47,11 +52,7 @@ function UIUtil.gamepadSelect(guiObject: GuiObject)
 	end
 end
 
-function UIUtil.applyKeybindIcon(
-	imageLabel: ImageLabel,
-	keyboardInput: Enum.KeyCode | Enum.UserInputType | nil,
-	gamepadInput: Enum.KeyCode | Enum.UserInputType | nil?
-)
+function UIUtil.applyKeybindIcon(imageLabel: ImageLabel, keyboardInput: Input, gamepadInput: Input)
 	return DeviceUtil.onInputTypeChanged(function()
 		if UserInputService.GamepadEnabled then
 			KeybindSprites.Gamepad:ApplySprite(gamepadInput, imageLabel)
@@ -65,49 +66,25 @@ end
 
 function UIUtil.bindInputToButton(
 	button: Button.Button,
-	keycodeIcon: ImageLabel,
-	keyboardInput: Enum.KeyCode | Enum.UserInputType | nil,
-	gamepadInput: Enum.KeyCode | Enum.UserInputType | nil?
+	iconContainer: ImageLabel,
+	keyboardInput: Input,
+	gamepadInput: Input,
+	authenticator: (() -> ()) | nil
 )
-	local maid = Maid.new()
-
-	maid:Add(function()
-		keycodeIcon.Image = ""
-	end)
-
-	if keycodeIcon then
-		maid:Add(UIUtil.applyKeybindIcon(keycodeIcon, keyboardInput, gamepadInput))
-	end
-
-	local lastInput: InputObject
-	maid:Add(UserInputService.InputBegan:Connect(function(input, sunk)
-		if sunk then
+	local maid = InputUtil.bindPress(function(inputState)
+		if authenticator and not authenticator then
 			return
 		end
-
-		local keycode = input.KeyCode
-		local inputType = input.UserInputType
-		if keycode == keyboardInput or inputType == keyboardInput or keycode == gamepadInput or inputType == gamepadInput then
-			lastInput = input
+		if inputState == Enum.UserInputState.Begin then
 			button.Pressed:Fire()
+		else
+			button.Released:Fire()
 		end
-	end))
+	end, keyboardInput, gamepadInput)
 
-	maid:Add(UserInputService.InputEnded:Connect(function(input, sunk)
-		if sunk then
-			return
-		end
-
-		local keycode = input.KeyCode
-		local inputType = input.UserInputType
-
-		if
-			input == lastInput
-			and (keycode == keyboardInput or inputType == keyboardInput or keycode == gamepadInput or inputType == gamepadInput)
-		then
-			button.Released:Fire(true)
-		end
-	end))
+	if iconContainer then
+		maid:Add(UIUtil.applyKeybindIcon(iconContainer, keyboardInput, gamepadInput))
+	end
 
 	return maid
 end

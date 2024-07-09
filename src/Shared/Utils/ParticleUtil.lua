@@ -4,7 +4,7 @@ local ParticleUtil = {}
 
 local assets = ReplicatedStorage.Assets.Particles
 
-export type Particles = { [string]: ParticleEmitter }
+export type ParticleList = { [string]: ParticleEmitter }
 
 local sharedPart = Instance.new("Part")
 sharedPart.Name = "ParticleSharedPart"
@@ -15,42 +15,37 @@ sharedPart.CanCollide = false
 sharedPart.Anchored = true
 sharedPart.Parent = Workspace
 
+function ParticleUtil.getList(from: Instance, to: Instance)
+	local particles: ParticleList = {}
+
+	for _, child in pairs(from:GetChildren()) do
+		local clone = child:Clone()
+		clone.Parent = to
+
+		for _, particle in pairs(clone:GetDescendants()) do
+			if particle:IsA("ParticleEmitter") then
+				particles[particle.Name] = particle
+			end
+		end
+	end
+
+	return particles
+end
+
 function ParticleUtil.getTemplate(name: string)
 	return assets[name]
 end
 
 -- Create particles from the template
 function ParticleUtil.fromTemplate(name: string)
-	local particles: Particles = {}
-
-	for _, particle in pairs(ParticleUtil.getTemplate(name):GetDescendants()) do
-		if particle:IsA("ParticleEmitter") then
-			particles[particle.Name] = particle:Clone()
-		end
-	end
-
-	return particles
+	ParticleUtil.getTemplate(name)
 end
 
-function ParticleUtil.cloneTemplate(name: string, parent: Instance)
-	local particles = {}
-
-	local clones = ParticleUtil.getTemplate(name):Clone()
-	for _, descendant in pairs(clones:GetDescendants()) do
-		if descendant:IsA("ParticleEmitter") then
-			particles[descendant.Name] = descendant
-		end
-	end
-
-	for _, child in pairs(clones:GetChildren()) do
-		child.Parent = parent
-	end
-	clones:Destroy()
-
-	return particles
+function ParticleUtil.getListFromTemplate(name: string, to: Instance)
+	return ParticleUtil.getList(ParticleUtil.getTemplate(name), to)
 end
 
-function ParticleUtil.parentToAttachment(particles: Particles, parent: BasePart?)
+function ParticleUtil.parentToAttachment(particles: ParticleList, parent: BasePart?)
 	local attachment = Instance.new("Attachment")
 	attachment.Parent = parent or sharedPart
 
@@ -59,13 +54,13 @@ function ParticleUtil.parentToAttachment(particles: Particles, parent: BasePart?
 	return attachment
 end
 
-function ParticleUtil.parentTo(particles: Particles, parent: Instance)
+function ParticleUtil.parentTo(particles: ParticleList, parent: Instance)
 	for _, particle in pairs(particles) do
 		particle.Parent = parent
 	end
 end
 
-function ParticleUtil.emit(particles: Particles, particleCount: number | { [string]: number }, parentPosition: Vector3?)
+function ParticleUtil.emit(particles: ParticleList, particleCount: number | { [string]: number }, parentPosition: Vector3?)
 	if parentPosition then
 		local parent
 		for _, particle in pairs(particles) do
@@ -97,13 +92,13 @@ function ParticleUtil.emit(particles: Particles, particleCount: number | { [stri
 	end
 end
 
-function ParticleUtil.toggleEnabled(particles: Particles, enabled: boolean)
+function ParticleUtil.toggleEnabled(particles: ParticleList, enabled: boolean)
 	for _, particle in pairs(particles) do
 		particle.Enabled = enabled
 	end
 end
 
-function ParticleUtil.scale(particles: Particles | { ParticleEmitter }, scale: number)
+function ParticleUtil.scale(particles: ParticleList | { ParticleEmitter }, scale: number)
 	for _, particle in pairs(particles) do
 		local sizeKeypoints = {}
 		for _, keypoint in pairs(particle.Size.Keypoints) do

@@ -7,14 +7,13 @@ local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 local Toggle = require(Paths.Shared.Toggle)
 local TweenUtil = require(Paths.Shared.Utils.TweenUtil)
 local Binder = require(Paths.Shared.Binder)
-local CameraController = require(Paths.Controllers.CameraController)
 
 local ANIMATION_LENGTH = 0.3
 local PROMPT_ANIMATION_LENGTH = ANIMATION_LENGTH / 2
 
 local BINDING_KEY = "PromptToggle"
-local OPEN_BLUR_SIZE = 24
-local OPEN_FOV = 60
+-- local OPEN_BLUR_SIZE = 20
+local DEFAULT_BACKGROUND_TRANSPARENCY = 0.6
 
 local blurEffect = Instance.new("BlurEffect")
 blurEffect.Size = 0
@@ -25,6 +24,16 @@ local backgroundScreen: ScreenGui = Paths.UI.Background
 local backgroundFrame: Frame = backgroundScreen.Frame
 
 local cosmeticsEnabled = Toggle.new(false)
+
+-------------------------------------------------------------------------------
+-- PUBLIC MEMBERS
+-------------------------------------------------------------------------------
+PromptUtil.Direction = {
+	Up = UDim2.fromScale(0, 1),
+	Down = UDim2.fromScale(0, -1),
+	Left = UDim2.fromScale(1, 0),
+	Right = UDim2.fromScale(-1, 0),
+}
 
 -------------------------------------------------------------------------------
 -- PUBLIC METHODS
@@ -49,27 +58,17 @@ function PromptUtil.openBackground(frame: Frame?)
 	)
 end
 
-function PromptUtil.open(prompt: Frame, cosmetics: boolean?)
+function PromptUtil.open(prompt: GuiObject, cosmetics: boolean?)
 	if cosmetics then
 		cosmeticsEnabled:Set(prompt, true)
 	end
 
-	local initialPosition = Binder.bindFirst(prompt, "InitialPosition", prompt.Position)
-	prompt.Position = initialPosition + UDim2.fromScale(0, 1)
-
 	prompt.Visible = true
-	TweenUtil.bind(
-		prompt,
-		BINDING_KEY,
-		TweenService:Create(
-			prompt,
-			TweenInfo.new(PROMPT_ANIMATION_LENGTH, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-			{ Position = initialPosition }
-		)
-	)
 end
 
-function PromptUtil.popIn(prompt: Frame, cosmetics: boolean?)
+function PromptUtil.scaleOpen(prompt: GuiObject, cosmetics: boolean?, direction: string?)
+	direction = direction or PromptUtil.Direction.Down
+
 	if cosmetics then
 		cosmeticsEnabled:Set(prompt, true)
 	end
@@ -83,13 +82,60 @@ function PromptUtil.popIn(prompt: Frame, cosmetics: boolean?)
 		BINDING_KEY,
 		TweenService:Create(
 			prompt,
-			TweenInfo.new(PROMPT_ANIMATION_LENGTH, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+			TweenInfo.new(PROMPT_ANIMATION_LENGTH, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
 			{ Size = initialSize }
 		)
 	)
 end
 
-function PromptUtil.close(prompt: Frame, cosmetics: boolean?)
+function PromptUtil.slideOpen(prompt: GuiObject, cosmetics: boolean?, direction: UDim2?)
+	direction = direction or PromptUtil.Direction.Up
+
+	if cosmetics then
+		cosmeticsEnabled:Set(prompt, true)
+	end
+
+	local initialPosition = Binder.bindFirst(prompt, "InitialPosition", prompt.Position)
+	prompt.Position = initialPosition + direction
+
+	prompt.Visible = true
+	TweenUtil.bind(
+		prompt,
+		BINDING_KEY,
+		TweenService:Create(
+			prompt,
+			TweenInfo.new(PROMPT_ANIMATION_LENGTH, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+			{ Position = initialPosition }
+		)
+	)
+end
+
+function PromptUtil.slideClose(prompt: GuiObject, cosmetics: boolean?, direction: UDim2?)
+	direction = direction or PromptUtil.Direction.Down
+
+	if cosmetics then
+		cosmeticsEnabled:Set(prompt, false)
+	end
+
+	local initialPosition = Binder.bindFirst(prompt, "InitialPosition", prompt.Position)
+
+	prompt.Visible = true
+	TweenUtil.bind(
+		prompt,
+		BINDING_KEY,
+		TweenService:Create(
+			prompt,
+			TweenInfo.new(PROMPT_ANIMATION_LENGTH, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+			{ Position = prompt.Position - direction }
+		),
+		function()
+			prompt.Visible = false
+			prompt.Position = initialPosition
+		end
+	)
+end
+
+function PromptUtil.close(prompt: GuiObject, cosmetics: boolean?)
 	if cosmetics then
 		cosmeticsEnabled:Set(prompt, false)
 	end
@@ -100,10 +146,11 @@ end
 -- INITIALIZATION
 -------------------------------------------------------------------------------
 backgroundScreen.Enabled = false
+backgroundScreen.Frame.BackgroundTransparency = DEFAULT_BACKGROUND_TRANSPARENCY
 
 cosmeticsEnabled.Changed:Connect(function(toggle)
 	if toggle then
-		TweenUtil.bind(
+		--[[ TweenUtil.bind(
 			blurEffect,
 			BINDING_KEY,
 			TweenService:Create(
@@ -111,13 +158,11 @@ cosmeticsEnabled.Changed:Connect(function(toggle)
 				TweenInfo.new(ANIMATION_LENGTH, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
 				{ Size = OPEN_BLUR_SIZE }
 			)
-		)
+		) *]]
 
 		PromptUtil.openBackground()
-
-		CameraController.setFov(OPEN_FOV, ANIMATION_LENGTH)
 	else
-		TweenUtil.bind(
+		--[[ TweenUtil.bind(
 			blurEffect,
 			BINDING_KEY,
 			TweenService:Create(
@@ -126,9 +171,9 @@ cosmeticsEnabled.Changed:Connect(function(toggle)
 				{ Size = 0 }
 			)
 		)
+ *]]
 
 		backgroundScreen.Enabled = false
-		CameraController.resetFov(ANIMATION_LENGTH)
 	end
 end)
 

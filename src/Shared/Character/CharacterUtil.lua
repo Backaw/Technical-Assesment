@@ -1,9 +1,7 @@
 local CharacterUtil = {}
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local ModelUtil = require(ReplicatedStorage.Modules.Utils.ModelUtil)
 
 local DEFAULT_TOUCH_TIMEOUT = 0.1
 
@@ -85,7 +83,7 @@ function CharacterUtil.teleportTo(player: Player, spawnPoint: BasePart | CFrame)
 	)
 end
 
-function CharacterUtil.safeInvokeHandler(handler: (any) -> any, ...)
+function CharacterUtil.safeInvokeHandler(handler: (any, any) -> any, ...)
 	if IS_STUDIO then
 		handler(...)
 	else
