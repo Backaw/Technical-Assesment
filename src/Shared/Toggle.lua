@@ -1,4 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --[[
     Wrapper for a boolean variable that manages potentially conflicting value changes.
 
@@ -18,7 +17,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Toggle = {}
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Signal = require(ReplicatedStorage.Modules.Signal)
+
+export type Toggle = typeof(Toggle.new())
 
 function Toggle.new(initialValue: boolean)
 	local toggle = {}
@@ -79,9 +81,12 @@ function Toggle.new(initialValue: boolean)
 	end
 
 	function toggle:RemoveJob(job: any)
-		if table.find(jobs, job) then
+		if toggle:HasJob(job) then
 			toggle:Set(job, not value)
+			return true
 		end
+
+		return false
 	end
 
 	function toggle:ForceSet(newValue)
@@ -94,6 +99,10 @@ function Toggle.new(initialValue: boolean)
 	function toggle:ForceSetQuiet(newValue)
 		jobs = {}
 		value = newValue
+	end
+
+	function toggle:HasJob(job: any)
+		return table.find(jobs, job) ~= nil
 	end
 
 	function toggle:Get(): boolean

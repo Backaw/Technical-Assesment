@@ -20,7 +20,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	local button = Component.new()
 
 	-------------------------------------------------------------------------------
-	-- PRIVATE MEMBERS
+	-- PRIVATE VARIABLES
 	-------------------------------------------------------------------------------
 	local clickIndicatorEnabled = true
 
@@ -30,7 +30,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	local buttonSizeAtClick: Vector2
 
 	-------------------------------------------------------------------------------
-	-- PUBLIC MEMBERS
+	-- PUBLIC VARIABLES
 	-------------------------------------------------------------------------------
 	button.Pressed = Signal.new()
 	button.Released = Signal.new()
@@ -39,7 +39,7 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 	button.Clicked = Signal.new()
 
 	-------------------------------------------------------------------------------
-	-- PUBLIC METHODS
+	-- PUBLIC FUNCTIONS
 	-------------------------------------------------------------------------------
 	function button:Mount(parent: Instance?, hideBackground: boolean?)
 		if hideBackground then

@@ -13,7 +13,35 @@ function TableUtil.deepClone<T>(tbl: T): T
 	return clone
 end
 
-function TableUtil.merge(tbl1: table, tbl2: table?)
+function TableUtil.shallowClone<T>(tbl: T): T
+	local clone = {} :: T
+
+	for i, v in pairs(tbl) do
+		clone[i] = v
+	end
+
+	return clone
+end
+
+function TableUtil.deepUnion(tbl1: table, tbl2: table?)
+	if tbl2 then
+		for i, v in pairs(tbl2) do
+			if typeof(v) == "table" and tbl1[i] then
+				if typeof(tbl1[i]) == "table" then
+					TableUtil.deepUnion(tbl1[i], v)
+				else
+					tbl1[i] = v
+				end
+			else
+				tbl1[i] = v
+			end
+		end
+	end
+
+	return tbl1
+end
+
+function TableUtil.shallowUnion(tbl1: table, tbl2: table?)
 	if tbl2 then
 		for i, v in pairs(tbl2) do
 			tbl1[i] = v
@@ -22,6 +50,113 @@ function TableUtil.merge(tbl1: table, tbl2: table?)
 
 	return tbl1
 end
+
+function TableUtil.equals(tbl1: table, tbl2: table?)
+	if not tbl2 then
+		return false
+	end
+
+	for k, v in pairs(tbl1) do
+		if typeof(v) == "table" then
+			if not TableUtil.equals(v, tbl2[k]) then
+				return false
+			end
+		else
+			if v ~= tbl2[k] then
+				return false
+			end
+		end
+	end
+
+	for k, v in pairs(tbl2) do
+		if typeof(v) == "table" then
+			if not TableUtil.equals(v, tbl1[k]) then
+				return false
+			end
+		else
+			if not v == tbl1[k] then
+				return false
+			end
+		end
+	end
+
+	return true
+end
+
+-- Only keeps the differences
+function TableUtil.deepNegate(tbl1: table, tbl2: table?)
+	if tbl2 then
+		for i, v in pairs(tbl2) do
+			if typeof(v) == "table" then
+				if typeof(tbl1[i]) == "table" then
+					if TableUtil.length(TableUtil.deepNegate(tbl1[i], v)) == 0 then
+						tbl1[i] = nil
+					end
+				else
+					tbl1[i] = v
+				end
+			elseif tbl1[i] == v then
+				-- print("TO NIL", i)
+				tbl1[i] = nil
+			else
+				tbl1[i] = v
+			end
+		end
+	end
+
+	return tbl1
+end
+
+-- Only keeps the differences
+function TableUtil.deepSubtract(tbl1: table, tbl2: table?)
+	if tbl2 then
+		for i, v in pairs(tbl2) do
+			if typeof(v) == "table" then
+				if typeof(tbl1[i]) == "table" then
+					if TableUtil.length(TableUtil.deepNegate(tbl1[i], v)) == 0 then
+						tbl1[i] = nil
+					end
+				else
+					tbl1[i] = v
+				end
+			elseif tbl1[i] == v then
+				-- print("TO NIL", i)
+				tbl1[i] = nil
+			else
+				tbl1[i] = v
+			end
+		end
+	end
+
+	return tbl1
+end
+
+function TableUtil.shallowNegate(tbl1: table, tbl2: table?)
+	if tbl2 then
+		for i, v in pairs(tbl2) do
+			if tbl1[i] == v then
+				tbl1[i] = nil
+			else
+				tbl1[i] = v
+			end
+		end
+	end
+
+	return tbl1
+end
+
+function TableUtil.shallowSubtract(tbl1: table, tbl2: table?)
+	if tbl2 then
+		for i, v in pairs(tbl2) do
+			if tbl1[i] == v then
+				tbl1[i] = nil
+			end
+		end
+	end
+
+	return tbl1
+end
+
 --[[
     Returns how many key value pairs are in a table
 ]]
@@ -115,8 +250,6 @@ function TableUtil.find(tbl: table, searchingFor: any)
 			return k
 		end
 	end
-
-	return nil
 end
 
 --[[
@@ -214,6 +347,20 @@ function TableUtil.getProperties(tbl: table, property: string)
 	end
 
 	return returning
+end
+
+function TableUtil.print(tbl, indent: number?)
+	indent = indent or 0
+	local spaces = string.rep(" ", indent)
+
+	for key, value in pairs(tbl) do
+		if type(value) == "table" then
+			print(spaces .. tostring(key) .. ":")
+			TableUtil.print(value, indent + 4)
+		else
+			print(spaces .. tostring(key) .. ": " .. tostring(value))
+		end
+	end
 end
 
 return TableUtil

@@ -1,7 +1,28 @@
 local StringUtil = {}
 
+function StringUtil.charAt(str: string, position: number)
+	return str:sub(position, position)
+end
+
+function StringUtil.getChars(str: string)
+	local chars = {}
+	for i = 1, #str do
+		local char = str:sub(i, i)
+		table.insert(chars, char)
+	end
+
+	return chars
+end
+
 function StringUtil.endsWith(str: string, ending: string)
 	return string.find(str, ending .. "$") ~= nil
+end
+
+function StringUtil.toCamelCase(str: string)
+	str = str:gsub("[%-_]+([^%-_])", function(s)
+		return s:upper()
+	end)
+	return str:sub(1, 1):lower() .. str:sub(2)
 end
 
 function StringUtil.toSnakeCase(str: string)
@@ -89,6 +110,10 @@ function StringUtil.getCompactNumber(number: number)
 	return tostring(number)
 end
 
+function StringUtil.startsWith(str: string, starting: string)
+	return string.sub(str, 1, string.len(starting)) == starting
+end
+
 function StringUtil.getOrdinalNumeral(number: number)
 	if number == 1 then
 		return "1st"
@@ -114,6 +139,10 @@ function StringUtil.byte(str: string)
 	end
 
 	return score
+end
+
+function StringUtil.capLength(str: string, maxLength: number)
+	return str:sub(1, maxLength)
 end
 
 return StringUtil

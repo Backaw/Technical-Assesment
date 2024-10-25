@@ -6,7 +6,7 @@ local Maid = require(Paths.Shared.Maid)
 local InstanceUtil = require(Paths.Shared.Utils.InstanceUtil)
 local CharacterUtil = require(Paths.Shared.Character.CharacterUtil)
 
-function PlayersUtil.loadPlayer(playerHandler: (player: Player, maid: Maid.Maid) -> (((Model) -> ())?, ((Model) -> ())?))
+function PlayersUtil.loadPlayers(playerHandler: (player: Player, maid: Maid.Maid) -> (((Model) -> ())?, ((Model) -> ())?))
 	local maid = Maid.new()
 
 	local function loadPlayer(player)
@@ -16,6 +16,8 @@ function PlayersUtil.loadPlayer(playerHandler: (player: Player, maid: Maid.Maid)
 		local characterLoadHandler, characteUnloadHandler = playerHandler(player, playerMaid)
 
 		local function loadCharacter()
+			playerMaid:RemoveIfExits("Death")
+
 			-- RETURN: Character doesn't exist
 			if not CharacterUtil.isAlive(player) then
 				return
@@ -26,15 +28,18 @@ function PlayersUtil.loadPlayer(playerHandler: (player: Player, maid: Maid.Maid)
 				characterLoadHandler(character)
 			end
 
-			character:WaitForChild("Humanoid").Died:Connect(function()
-				if characteUnloadHandler then
-					characteUnloadHandler(character)
-				end
-			end)
+			playerMaid:Add(
+				character:WaitForChild("Humanoid").Died:Connect(function()
+					if characteUnloadHandler then
+						characteUnloadHandler(character)
+					end
+				end),
+				"Death"
+			)
 		end
 
 		loadCharacter()
-		player.CharacterAdded:Connect(loadCharacter)
+		playerMaid:Add(player.CharacterAdded:Connect(loadCharacter))
 
 		playerMaid:Add(InstanceUtil.onDestroyed(player, function()
 			maid:Remove(playerMaidTask)
