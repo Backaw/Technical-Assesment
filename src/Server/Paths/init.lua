@@ -51,25 +51,12 @@ task.delay(0, function()
 	local ping = os.clock()
 
 	local initializing = {
-		loadModule(Paths.Shared.Utils.ParticleUtil),
-
 		-- Services
-		loadModule(Paths.Services.SoftShutdownService),
 		loadModule(Paths.Services.UnitTestingService),
-		loadModule(Paths.Services.Products.ItemProductsService),
-		loadModule(Paths.Services.CollisionService),
 		loadModule(Paths.Services.PlayersService),
-		loadModule(Paths.Services.CurrencyService),
-		loadModule(Paths.Services.Products.ProductService),
 		loadModule(Paths.Services.SettingsService),
 		loadModule(Paths.Services.Cmdr.CmdrService),
-		loadModule(Paths.Services.GameAnalyticsService),
 		loadModule(Paths.Services.PromoCodeService),
-		loadModule(Paths.Services.ItemService),
-
-		-- loadModule(Paths.Services.Data.LeaderboardService),
-		loadModule(Paths.Services.RewardService),
-		loadModule(Paths.Services.FriendsService),
 	}
 
 	for _, module in ipairs(initializing) do

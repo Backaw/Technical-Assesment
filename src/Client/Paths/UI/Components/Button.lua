@@ -6,8 +6,6 @@ local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 local Signal = require(Paths.Shared.Signal)
 local Component = require(Paths.Controllers.UI.Components.Component)
-local ClickIndicator = require(Paths.Controllers.UI.Components.ClickIndicator)
-local Sounds = require(Paths.Shared.Sounds)
 local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 local UIUtil = require(Paths.Controllers.UI.Utils.UIUtil)
 
@@ -16,13 +14,12 @@ local CLICK_COOLDOWN = 0.05
 export type Button = typeof(Button.new())
 local playerGui = Players.LocalPlayer.PlayerGui
 
-function Button.new(guiObject: GuiButton, mute: boolean?)
+function Button.new(guiObject: GuiButton)
 	local button = Component.new()
 
 	-------------------------------------------------------------------------------
 	-- PRIVATE VARIABLES
 	-------------------------------------------------------------------------------
-	local clickIndicatorEnabled = true
 
 	local hovering: boolean = false
 	local clickDebounce = false
@@ -73,10 +70,6 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 		return hovering
 	end
 
-	function button:EnableClickIndicator()
-		clickIndicatorEnabled = true
-	end
-
 	function button:ToggleColor(toggle: boolean)
 		if toggle then
 			guiObject.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -94,17 +87,9 @@ function Button.new(guiObject: GuiButton, mute: boolean?)
 		if not clickDebounce then
 			clickDebounce = true
 
-			if clickIndicatorEnabled then
-				ClickIndicator.play()
-			end
-
 			buttonSizeAtClick = guiObject.AbsoluteSize
 
 			button.Pressed:Fire()
-
-			if not mute then
-				Sounds.play("ButtonClick")
-			end
 
 			local connection: RBXScriptConnection
 			connection = UserInputService.InputEnded:Connect(function(input)

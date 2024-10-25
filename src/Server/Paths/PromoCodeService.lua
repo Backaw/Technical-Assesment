@@ -5,7 +5,7 @@ local Paths = require(ServerScriptService.Paths)
 local Remotes = require(Paths.Shared.Remotes)
 local PromoCodeConstants = require(Paths.Shared.Constants.PromoCodeConstants)
 local PlayerDataService = require(Paths.Services.Data.PlayerDataService)
-local RewardService = require(Paths.Services.RewardService)
+-- local RewardService = require(Paths.Services.RewardService)
 
 Remotes.bindFunctions({
 	RedeemCode = function(player: Player, code: string)
@@ -23,7 +23,7 @@ Remotes.bindFunctions({
 
 		if info.BestBy > os.time() then
 			PlayerDataService.set(player, address, true)
-			RewardService.award(player, info.Reward, "PromoCode")
+			-- RewardService.award(player, info.Reward, "PromoCode")
 
 			return PromoCodeConstants.State.Success
 		else

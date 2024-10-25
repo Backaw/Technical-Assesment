@@ -25,10 +25,6 @@
           },
           "Cmdr": {
             "$path": "Cmdr/Cmdr"
-          },
-
-          "GameAnalytics": {
-            "$path": "GA-SDK-ROBLOX/gameanalytics-sdk/GameAnalytics"
           }
         }
       }
@@ -50,11 +46,7 @@
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "$ignoreUnknownInstances": true,
-        "$path": "src/Client",
-
-        "GameAnalyticsClient": {
-          "$path": "GA-SDK-ROBLOX/gameanalytics-sdk/GameAnalyticsClient.lua"
-        }
+        "$path": "src/Client"
       }
     }
   }

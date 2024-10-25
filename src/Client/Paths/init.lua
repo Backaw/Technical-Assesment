@@ -6,22 +6,14 @@ local GameConstants = require(ReplicatedStorage.Modules.Game.GameConstants)
 
 local INITIALIZING = {
 	-- Controllers
-	script.ProductController,
 	script.CoreGuiController,
 	script.Cmdr.CmdrController,
 	script.UnitTestingController,
-	script.SoundController,
-	script.ItemController,
-	script.LeaderboardController,
-	script.InteractionController,
 
 	-- UI
 	script.UI.UIScaleController,
 	script.UI.UIController,
 	script.UI.Utils.UIUtil,
-
-	-- Analytics
-	script.Parent:WaitForChild("GameAnalyticsClient"),
 }
 
 Paths.Controllers = script

@@ -6,7 +6,6 @@ local UserInputService = game:GetService("UserInputService")
 local Paths = require(Players.LocalPlayer.PlayerScripts.Paths)
 local UIConstants = require(Paths.Controllers.UI.UIConstants)
 local Button: typeof(require(Paths.Controllers.UI.Components.Button))
-local KeybindSprites = require(Paths.Controllers.UI.KeybindSprites)
 local DeviceUtil = require(Paths.Controllers.Utils.DeviceUtil)
 local InputUtil = require(Paths.Controllers.Utils.InputUtil)
 
@@ -50,43 +49,6 @@ function UIUtil.gamepadSelect(guiObject: GuiObject)
 	if DeviceUtil.isGamepadInput() then
 		GuiService.SelectedObject = guiObject
 	end
-end
-
-function UIUtil.applyKeybindIcon(imageLabel: ImageLabel, keyboardInput: Input, gamepadInput: Input)
-	return DeviceUtil.onInputTypeChanged(function()
-		if UserInputService.GamepadEnabled then
-			KeybindSprites.Gamepad:ApplySprite(gamepadInput, imageLabel)
-		elseif DeviceUtil.isDesktop() then
-			KeybindSprites.Keyboard:ApplySprite(keyboardInput, imageLabel)
-		else
-			KeybindSprites.Gamepad:ApplySprite(nil, imageLabel)
-		end
-	end)
-end
-
-function UIUtil.bindInputToButton(
-	button: Button.Button,
-	iconContainer: ImageLabel,
-	keyboardInput: Input,
-	gamepadInput: Input,
-	authenticator: (() -> ()) | nil
-)
-	local maid = InputUtil.bindPress(function(inputState)
-		if authenticator and not authenticator then
-			return
-		end
-		if inputState == Enum.UserInputState.Begin then
-			button.Pressed:Fire()
-		else
-			button.Released:Fire()
-		end
-	end, keyboardInput, gamepadInput)
-
-	if iconContainer then
-		maid:Add(UIUtil.applyKeybindIcon(iconContainer, keyboardInput, gamepadInput))
-	end
-
-	return maid
 end
 
 function UIUtil.isMouseWithinObjectBounds(guiObject: GuiObject, size: Vector2?)

@@ -11,17 +11,7 @@ type Promise = typeof(Promise.new())
 
 local DEBUG = false
 local LOADERS = {
-	Paths.Services.PlaytimeRewardService,
 	Paths.Services.Data.PlayerDataService,
-	Paths.Services.GameAnalyticsService,
-	Paths.Services.Products.ProductService,
-	Paths.Services.Data.LeaderstatService,
-	Paths.Services.CharactersService,
-	Paths.Services.ItemService,
-	Paths.Services.BadgeUnlockingService,
-	Paths.Services.LoginService,
-	Paths.Services.FriendsService,
-	Paths.Services.QuestService,
 }
 
 -------------------------------------------------------------------------------
